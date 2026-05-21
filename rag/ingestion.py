@@ -1,10 +1,12 @@
 """Load policy markdown, chunk by heading hierarchy, embed, and persist to Chroma."""
+from __future__ import annotations
+
 import re
 import shutil
 from pathlib import Path
 from typing import Iterable
 
-from langchain.text_splitter import (
+from langchain_text_splitters import (
     MarkdownHeaderTextSplitter,
     RecursiveCharacterTextSplitter,
 )
