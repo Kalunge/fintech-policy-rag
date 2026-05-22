@@ -25,8 +25,9 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Caddy binary from stage 1
-COPY --from=caddy_src /usr/bin/caddy /usr/local/bin/caddy
+# Caddy binary from stage 1. The chmod is needed because Render's image registry
+# can strip the executable bit during multi-stage COPY; --chmod sets it explicitly.
+COPY --from=caddy_src --chmod=0755 /usr/bin/caddy /usr/local/bin/caddy
 
 # Python dependencies (cached separately from source for faster rebuilds)
 COPY requirements.txt .
@@ -39,6 +40,9 @@ COPY ui/ ./ui/
 COPY scripts/ ./scripts/
 COPY corpus/ ./corpus/
 COPY deploy/ ./deploy/
+
+# Ensure start.sh is executable inside the image (same registry stripping risk).
+RUN chmod +x /app/deploy/start.sh
 
 # Build the Chroma vector store at image-build time so the container starts fast.
 # Downloads the embedding model into HF_HOME as a side effect; both end up in
