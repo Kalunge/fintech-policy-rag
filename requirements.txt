@@ -1,3 +1,7 @@
+# Use the CPU-only PyTorch wheel index — without this, sentence-transformers
+# pulls in ~2GB of NVIDIA CUDA libraries we don't need for inference.
+--extra-index-url https://download.pytorch.org/whl/cpu
+
 # Core RAG stack
 langchain>=0.3.0
 langchain-community>=0.3.0
@@ -7,6 +11,7 @@ langchain-groq>=0.2.0
 langchain-huggingface>=0.1.0
 chromadb>=0.5.0
 sentence-transformers>=3.0.0
+torch>=2.0,<3.0
 
 # Document parsing
 pypdf>=4.0.0
