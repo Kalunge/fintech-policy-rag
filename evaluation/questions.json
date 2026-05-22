@@ -1,0 +1,211 @@
+[
+  {
+    "id": "info-sec-001",
+    "question": "What is the maximum session length for privileged access?",
+    "expected_doc_id": "TBP-POL-IS-001",
+    "expected_section_contains": "Access Control",
+    "must_contain": ["8 hours"],
+    "gold_answer": "Privileged access sessions are time-bound with a maximum length of 8 hours.",
+    "in_corpus": true
+  },
+  {
+    "id": "info-sec-002",
+    "question": "How long does ThaBytePay take to remediate critical vulnerabilities?",
+    "expected_doc_id": "TBP-POL-IS-001",
+    "expected_section_contains": "Vulnerability Management",
+    "must_contain": ["7 days", "CVSS"],
+    "gold_answer": "Critical vulnerabilities (CVSS 9.0+) must be remediated within 7 days.",
+    "in_corpus": true
+  },
+  {
+    "id": "info-sec-003",
+    "question": "What is the minimum password length policy?",
+    "expected_doc_id": "TBP-POL-IS-001",
+    "expected_section_contains": "Password Management",
+    "must_contain": ["14"],
+    "gold_answer": "The minimum password length is 14 characters.",
+    "in_corpus": true
+  },
+  {
+    "id": "data-prot-001",
+    "question": "How long are KYC documents retained after account closure?",
+    "expected_doc_id": "TBP-POL-DP-001",
+    "expected_section_contains": "Data Retention",
+    "must_contain": ["7 years"],
+    "gold_answer": "KYC documents are retained for 7 years from account closure.",
+    "in_corpus": true
+  },
+  {
+    "id": "data-prot-002",
+    "question": "Within what timeframe must a data breach be reported to the regulator?",
+    "expected_doc_id": "TBP-POL-DP-001",
+    "expected_section_contains": "Breach",
+    "must_contain": ["72"],
+    "gold_answer": "Data breaches with risk to data subjects must be reported to the Data Protection Commissioner within 72 hours.",
+    "in_corpus": true
+  },
+  {
+    "id": "agency-001",
+    "question": "What is the daily transaction limit for a Tier-3 agent?",
+    "expected_doc_id": "TBP-POL-AB-001",
+    "expected_section_contains": "Tiers and Transaction Limits",
+    "must_contain": ["5,000,000", "150,000"],
+    "gold_answer": "Tier-3 agents have a daily transaction volume of 5,000,000 KES and a single transaction limit of 150,000 KES.",
+    "in_corpus": true
+  },
+  {
+    "id": "agency-002",
+    "question": "What is the minimum float that a Master Agent must maintain?",
+    "expected_doc_id": "TBP-POL-AB-001",
+    "expected_section_contains": "Tiers and Transaction Limits",
+    "must_contain": ["1,500,000"],
+    "gold_answer": "Master Agents must maintain a minimum float of 1,500,000 KES.",
+    "in_corpus": true
+  },
+  {
+    "id": "agency-003",
+    "question": "What activities are prohibited for agents?",
+    "expected_doc_id": "TBP-POL-AB-001",
+    "expected_section_contains": "Permitted Transactions",
+    "must_contain": ["lending", "credit"],
+    "gold_answer": "Agents are prohibited from lending or extending credit, accepting foreign currency, charging fees beyond the Group tariff, or subcontracting to unauthorised parties.",
+    "in_corpus": true
+  },
+  {
+    "id": "pos-001",
+    "question": "How often are POS PIN encryption keys rotated?",
+    "expected_doc_id": "TBP-POL-PT-001",
+    "expected_section_contains": "Key Management",
+    "must_contain": ["90 days"],
+    "gold_answer": "POS PIN encryption keys are rotated every 90 days.",
+    "in_corpus": true
+  },
+  {
+    "id": "pos-002",
+    "question": "What happens when a POS terminal reports a tamper alarm?",
+    "expected_doc_id": "TBP-POL-PT-001",
+    "expected_section_contains": "Tamper",
+    "must_contain": ["suspended", "24 hours"],
+    "gold_answer": "Terminals reporting a tamper alarm are suspended immediately in the TMS, recovered from the merchant within 24 hours, and quarantined for forensic review.",
+    "in_corpus": true
+  },
+  {
+    "id": "cards-001",
+    "question": "When must a stolen card be reported?",
+    "expected_doc_id": "TBP-POL-CI-001",
+    "expected_section_contains": "Loss, Theft",
+    "must_contain": ["immediately"],
+    "gold_answer": "Lost or stolen cards must be reported immediately via the 24/7 Card Hotline, mobile app, or any branch.",
+    "in_corpus": true
+  },
+  {
+    "id": "cards-002",
+    "question": "What is the standard card validity period?",
+    "expected_doc_id": "TBP-POL-CI-001",
+    "expected_section_contains": "Renewals",
+    "must_contain": ["36 months"],
+    "gold_answer": "The standard card validity period is 36 months.",
+    "in_corpus": true
+  },
+  {
+    "id": "kyc-001",
+    "question": "What is the balance limit for a Tier-1 KYC account?",
+    "expected_doc_id": "TBP-POL-KA-001",
+    "expected_section_contains": "KYC Tiers",
+    "must_contain": ["50,000"],
+    "gold_answer": "Tier-1 (Basic) KYC accounts have a balance limit of 50,000 KES and a daily transaction limit of 25,000 KES.",
+    "in_corpus": true
+  },
+  {
+    "id": "kyc-002",
+    "question": "How often are high-risk customer relationships reviewed?",
+    "expected_doc_id": "TBP-POL-KA-001",
+    "expected_section_contains": "Periodic Review",
+    "must_contain": ["12 months"],
+    "gold_answer": "High-risk customer relationships are reviewed every 12 months.",
+    "in_corpus": true
+  },
+  {
+    "id": "incident-001",
+    "question": "What is the SEV1 response SLA?",
+    "expected_doc_id": "TBP-POL-IR-001",
+    "expected_section_contains": "Severity Classification",
+    "must_contain": ["15 minutes"],
+    "gold_answer": "The response SLA for SEV1 incidents is 15 minutes.",
+    "in_corpus": true
+  },
+  {
+    "id": "incident-002",
+    "question": "When is a post-incident review held?",
+    "expected_doc_id": "TBP-POL-IR-001",
+    "expected_section_contains": "Post-Incident Review",
+    "must_contain": ["10 business days"],
+    "gold_answer": "A post-incident review is held within 10 business days of incident closure for SEV1, SEV2, and SEV3 incidents.",
+    "in_corpus": true
+  },
+  {
+    "id": "acceptable-001",
+    "question": "What must employees do if a Group laptop is lost or stolen?",
+    "expected_doc_id": "TBP-POL-AU-001",
+    "expected_section_contains": "Reporting",
+    "must_contain": ["1 hour"],
+    "gold_answer": "Lost or stolen Group devices must be reported within 1 hour to the IT Service Desk for remote wipe.",
+    "in_corpus": true
+  },
+  {
+    "id": "remote-001",
+    "question": "What is the monthly home-office allowance for remote employees?",
+    "expected_doc_id": "TBP-POL-RW-001",
+    "expected_section_contains": "Equipment and Connectivity",
+    "must_contain": ["5,000"],
+    "gold_answer": "ThaBytePay pays a monthly home-office allowance of 5,000 KES to employees on hybrid or fully remote arrangements.",
+    "in_corpus": true
+  },
+  {
+    "id": "expense-001",
+    "question": "What approval is needed to spend 800,000 KES?",
+    "expected_doc_id": "TBP-POL-EP-001",
+    "expected_section_contains": "Approval Authority Matrix",
+    "must_contain": ["Functional Director"],
+    "gold_answer": "Spending between 250,001 and 1,000,000 KES requires Functional Director approval.",
+    "in_corpus": true
+  },
+  {
+    "id": "conduct-001",
+    "question": "What is the threshold for declaring a gift from a customer?",
+    "expected_doc_id": "TBP-POL-EC-001",
+    "expected_section_contains": "Gifts and Hospitality",
+    "must_contain": ["5,000"],
+    "gold_answer": "Gifts or hospitality above 5,000 KES must be declared in the Gifts Register within 5 business days. Cash equivalents may never be accepted.",
+    "in_corpus": true
+  },
+  {
+    "id": "bcdr-001",
+    "question": "What is the Recovery Time Objective for mobile banking?",
+    "expected_doc_id": "TBP-POL-BC-001",
+    "expected_section_contains": "Process Criticality and Recovery Targets",
+    "must_contain": ["1 hour"],
+    "gold_answer": "Mobile banking is a Tier-1 process with an RTO of 1 hour and an RPO of 5 minutes.",
+    "in_corpus": true
+  },
+  {
+    "id": "ooc-001",
+    "question": "What is the best recipe for banana bread?",
+    "in_corpus": false
+  },
+  {
+    "id": "ooc-002",
+    "question": "What is the capital of France?",
+    "in_corpus": false
+  },
+  {
+    "id": "ooc-003",
+    "question": "Who won the 2022 FIFA World Cup?",
+    "in_corpus": false
+  },
+  {
+    "id": "ooc-004",
+    "question": "How do I fix a leaking kitchen tap?",
+    "in_corpus": false
+  }
+]

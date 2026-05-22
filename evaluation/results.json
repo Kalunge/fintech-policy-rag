@@ -1,0 +1,726 @@
+{
+  "summary": {
+    "total_questions": 25,
+    "in_corpus": {
+      "n": 21,
+      "groundedness_pct": 100.0,
+      "citation_accuracy_pct": 100.0,
+      "correct_policy_cited_pct": 100.0,
+      "full_partial_match_pct": 100.0
+    },
+    "out_of_corpus": {
+      "n": 4,
+      "correct_refusal_pct": 100.0
+    },
+    "latency_ms": {
+      "p50": 4788.7,
+      "p95": 5816.9,
+      "min": 408.5,
+      "max": 6054.0,
+      "mean": 3768.9,
+      "samples": 25
+    }
+  },
+  "results": [
+    {
+      "id": "info-sec-001",
+      "question": "What is the maximum session length for privileged access?",
+      "in_corpus": true,
+      "answer": "The maximum session length for privileged access is 8 hours [Source 1].",
+      "citations": [
+        {
+          "source_idx": 1,
+          "doc_id": "TBP-POL-IS-001",
+          "doc_title": "Information Security Policy",
+          "section": "Information Security Policy > 4. Policy Statements > 4.1 Access Control",
+          "chunk_id": "TBP-POL-IS-001::ch004"
+        }
+      ],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 30.0,
+      "generate_ms": 587.2,
+      "total_ms": 617.4,
+      "judge": {
+        "grounded": true,
+        "grounded_reasoning": "The answer statement about the maximum session length for privileged access is directly supported by Source 1, which explicitly states that sessions are time-bound with a maximum session length of 8 hours.",
+        "citations_accurate": true,
+        "citations_reasoning": "The citation [Source 1] in the answer accurately points to a source that contains the cited claim about the maximum session length for privileged access."
+      },
+      "correct_policy_cited": true,
+      "partial_match": {
+        "score": 1.0,
+        "missing": []
+      }
+    },
+    {
+      "id": "info-sec-002",
+      "question": "How long does ThaBytePay take to remediate critical vulnerabilities?",
+      "in_corpus": true,
+      "answer": "According to the Information Security Policy [Source 2], ThaBytePay must remediate critical vulnerabilities (CVSS 9.0+) within 7 days.",
+      "citations": [
+        {
+          "source_idx": 2,
+          "doc_id": "TBP-POL-IS-001",
+          "doc_title": "Information Security Policy",
+          "section": "Information Security Policy > 4. Policy Statements > 4.7 Vulnerability Management",
+          "chunk_id": "TBP-POL-IS-001::ch010"
+        }
+      ],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 547.0,
+      "generate_ms": 374.1,
+      "total_ms": 921.3,
+      "judge": {
+        "grounded": true,
+        "grounded_reasoning": "The answer directly restates a fact from Source 2, which supports the claim about remediating critical vulnerabilities within 7 days.",
+        "citations_accurate": true,
+        "citations_reasoning": "The citation of Source 2 accurately points to the source that contains the claim about remediating critical vulnerabilities within 7 days."
+      },
+      "correct_policy_cited": true,
+      "partial_match": {
+        "score": 1.0,
+        "missing": []
+      }
+    },
+    {
+      "id": "info-sec-003",
+      "question": "What is the minimum password length policy?",
+      "in_corpus": true,
+      "answer": "The minimum password length is 14 characters [Source 1].",
+      "citations": [
+        {
+          "source_idx": 1,
+          "doc_id": "TBP-POL-IS-001",
+          "doc_title": "Information Security Policy",
+          "section": "Information Security Policy > 4. Policy Statements > 4.2 Password Management",
+          "chunk_id": "TBP-POL-IS-001::ch005"
+        }
+      ],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 52.5,
+      "generate_ms": 365.9,
+      "total_ms": 418.4,
+      "judge": {
+        "grounded": true,
+        "grounded_reasoning": "The answer's factual claim about the minimum password length is supported by Source 1, which explicitly states the minimum password length as 14 characters.",
+        "citations_accurate": true,
+        "citations_reasoning": "The citation of Source 1 in the answer accurately points to a source that contains the cited claim about the minimum password length."
+      },
+      "correct_policy_cited": true,
+      "partial_match": {
+        "score": 1.0,
+        "missing": []
+      }
+    },
+    {
+      "id": "data-prot-001",
+      "question": "How long are KYC documents retained after account closure?",
+      "in_corpus": true,
+      "answer": "KYC documents are retained for 7 years from account closure [Source 1, Source 2].",
+      "citations": [
+        {
+          "source_idx": 1,
+          "doc_id": "TBP-POL-KA-001",
+          "doc_title": "KYC & AML Compliance Policy",
+          "section": "KYC & AML Compliance Policy > 4. Policy Statements > 4.7 Record Keeping",
+          "chunk_id": "TBP-POL-KA-001::ch010"
+        },
+        {
+          "source_idx": 2,
+          "doc_id": "TBP-POL-DP-001",
+          "doc_title": "Data Protection & Privacy Policy",
+          "section": "Data Protection & Privacy Policy > 4. Policy Statements > 4.5 Data Retention",
+          "chunk_id": "TBP-POL-DP-001::ch008"
+        }
+      ],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 45.8,
+      "generate_ms": 362.7,
+      "total_ms": 408.5,
+      "judge": {
+        "grounded": true,
+        "grounded_reasoning": "The answer's claim that KYC documents are retained for 7 years from account closure is supported by both Source 1 and Source 2.",
+        "citations_accurate": true,
+        "citations_reasoning": "Both Source 1 and Source 2 are accurately cited to support the claim that KYC documents are retained for 7 years from account closure."
+      },
+      "correct_policy_cited": true,
+      "partial_match": {
+        "score": 1.0,
+        "missing": []
+      }
+    },
+    {
+      "id": "data-prot-002",
+      "question": "Within what timeframe must a data breach be reported to the regulator?",
+      "in_corpus": true,
+      "answer": "According to [Source 1] and [Source 2], a data breach must be reported to the Data Protection Commissioner within **72 hours** of confirmed personal data breach with risk to data subjects. Additionally, suspected data breaches must be reported to the Data Protection Office within **1 hour of discovery** [Source 2].",
+      "citations": [
+        {
+          "source_idx": 1,
+          "doc_id": "TBP-POL-IR-001",
+          "doc_title": "Incident Response Policy",
+          "section": "Incident Response Policy > 4. Policy Statements > 4.6 Regulator Notification",
+          "chunk_id": "TBP-POL-IR-001::ch009"
+        },
+        {
+          "source_idx": 2,
+          "doc_id": "TBP-POL-DP-001",
+          "doc_title": "Data Protection & Privacy Policy",
+          "section": "Data Protection & Privacy Policy > 4. Policy Statements > 4.7 Data Breach Notification",
+          "chunk_id": "TBP-POL-DP-001::ch010"
+        }
+      ],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 43.3,
+      "generate_ms": 412.6,
+      "total_ms": 456.0,
+      "judge": {
+        "grounded": true,
+        "grounded_reasoning": "Every factual claim in the answer is supported by at least one source, specifically the 72-hour timeframe is mentioned in both Source 1 and Source 2, and the 1-hour timeframe is mentioned in Source 2.",
+        "citations_accurate": true,
+        "citations_reasoning": "All citations in the answer point to sources that actually contain the cited claims, with Source 1 supporting the 72-hour notification to the Data Protection Commissioner and Source 2 supporting both the 72-hour and 1-hour notification timeframes."
+      },
+      "correct_policy_cited": true,
+      "partial_match": {
+        "score": 1.0,
+        "missing": []
+      }
+    },
+    {
+      "id": "agency-001",
+      "question": "What is the daily transaction limit for a Tier-3 agent?",
+      "in_corpus": true,
+      "answer": "The daily transaction limit for a Tier-3 agent is 5,000,000 KES, with a single transaction limit of 150,000 KES [Source 1].",
+      "citations": [
+        {
+          "source_idx": 1,
+          "doc_id": "TBP-POL-AB-001",
+          "doc_title": "Agency Banking Operations Policy",
+          "section": "Agency Banking Operations Policy > 4. Policy Statements > 4.3 Agent Tiers and Transaction Limits",
+          "chunk_id": "TBP-POL-AB-001::ch006"
+        }
+      ],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 188.6,
+      "generate_ms": 408.8,
+      "total_ms": 597.5,
+      "judge": {
+        "grounded": true,
+        "grounded_reasoning": "The answer's factual claims about the daily transaction limit and single transaction limit for a Tier-3 agent are supported by the provided source, specifically the table in section 4.3 of the Agency Banking Operations Policy.",
+        "citations_accurate": true,
+        "citations_reasoning": "The citation [Source 1] in the answer accurately points to the source that contains the cited claim about the daily transaction limit and single transaction limit for a Tier-3 agent."
+      },
+      "correct_policy_cited": true,
+      "partial_match": {
+        "score": 1.0,
+        "missing": []
+      }
+    },
+    {
+      "id": "agency-002",
+      "question": "What is the minimum float that a Master Agent must maintain?",
+      "in_corpus": true,
+      "answer": "According to [Source 5], a Master Agent must maintain a minimum float of 1,500,000 KES.",
+      "citations": [
+        {
+          "source_idx": 5,
+          "doc_id": "TBP-POL-AB-001",
+          "doc_title": "Agency Banking Operations Policy",
+          "section": "Agency Banking Operations Policy > 4. Policy Statements > 4.3 Agent Tiers and Transaction Limits",
+          "chunk_id": "TBP-POL-AB-001::ch006"
+        }
+      ],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 76.8,
+      "generate_ms": 5614.2,
+      "total_ms": 5691.1,
+      "judge": {
+        "grounded": true,
+        "grounded_reasoning": "The answer's factual claim about the minimum float for a Master Agent is supported by Source 5, which explicitly states the float minimum for a Master Agent as 1,500,000 KES.",
+        "citations_accurate": true,
+        "citations_reasoning": "The citation of Source 5 in the answer accurately points to the source that contains the cited claim about the minimum float for a Master Agent."
+      },
+      "correct_policy_cited": true,
+      "partial_match": {
+        "score": 1.0,
+        "missing": []
+      }
+    },
+    {
+      "id": "agency-003",
+      "question": "What activities are prohibited for agents?",
+      "in_corpus": true,
+      "answer": "According to [Source 2], agents are strictly prohibited from: \n- Lending or extending credit in any form\n- Accepting foreign currency transactions\n- Performing transactions outside agreed business hours without authorisation\n- Charging fees beyond the published Group tariff\n- Subcontracting services to unauthorised parties.",
+      "citations": [
+        {
+          "source_idx": 2,
+          "doc_id": "TBP-POL-AB-001",
+          "doc_title": "Agency Banking Operations Policy",
+          "section": "Agency Banking Operations Policy > 4. Policy Statements > 4.2 Permitted Transactions",
+          "chunk_id": "TBP-POL-AB-001::ch005"
+        }
+      ],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 1143.2,
+      "generate_ms": 3586.5,
+      "total_ms": 4729.8,
+      "judge": {
+        "grounded": true,
+        "grounded_reasoning": "The answer directly restates the list of prohibited activities for agents from Source 2, which supports every factual claim made in the answer.",
+        "citations_accurate": true,
+        "citations_reasoning": "The citation to Source 2 is accurate because the source explicitly states the prohibited activities for agents, matching the claims made in the answer."
+      },
+      "correct_policy_cited": true,
+      "partial_match": {
+        "score": 1.0,
+        "missing": []
+      }
+    },
+    {
+      "id": "pos-001",
+      "question": "How often are POS PIN encryption keys rotated?",
+      "in_corpus": true,
+      "answer": "POS PIN encryption keys are rotated every 90 days [Source 1].",
+      "citations": [
+        {
+          "source_idx": 1,
+          "doc_id": "TBP-POL-PT-001",
+          "doc_title": "POS Terminal Management Policy",
+          "section": "POS Terminal Management Policy > 4. Policy Statements > 4.4 Key Management",
+          "chunk_id": "TBP-POL-PT-001::ch007"
+        }
+      ],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 273.1,
+      "generate_ms": 4543.3,
+      "total_ms": 4816.8,
+      "judge": {
+        "grounded": true,
+        "grounded_reasoning": "The answer's claim about POS PIN encryption keys being rotated every 90 days is directly supported by Source 1.",
+        "citations_accurate": true,
+        "citations_reasoning": "The citation of Source 1 in the answer accurately references the source that contains the claim about POS PIN encryption keys being rotated every 90 days."
+      },
+      "correct_policy_cited": true,
+      "partial_match": {
+        "score": 1.0,
+        "missing": []
+      }
+    },
+    {
+      "id": "pos-002",
+      "question": "What happens when a POS terminal reports a tamper alarm?",
+      "in_corpus": true,
+      "answer": "When a POS terminal reports a tamper alarm, it must be: \n1. **Suspended immediately** in the TMS to prevent further transactions \n2. Recovered from the merchant within 24 hours by the Field Services team \n3. Quarantined at the secure terminal store pending forensic review \n4. Reviewed by the Information Security team within 5 business days \n5. Either re-certified for deployment or securely destroyed [Source 1].",
+      "citations": [
+        {
+          "source_idx": 1,
+          "doc_id": "TBP-POL-PT-001",
+          "doc_title": "POS Terminal Management Policy",
+          "section": "POS Terminal Management Policy > 4. Policy Statements > 4.6 Tamper Detection and Response",
+          "chunk_id": "TBP-POL-PT-001::ch009"
+        }
+      ],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 186.0,
+      "generate_ms": 4633.1,
+      "total_ms": 4819.3,
+      "judge": {
+        "grounded": true,
+        "grounded_reasoning": "The answer directly restates the steps outlined in Source 1 for handling a POS terminal that reports a tamper alarm.",
+        "citations_accurate": true,
+        "citations_reasoning": "The citation [Source 1] accurately references the source that contains the listed steps for responding to a tamper alarm."
+      },
+      "correct_policy_cited": true,
+      "partial_match": {
+        "score": 1.0,
+        "missing": []
+      }
+    },
+    {
+      "id": "cards-001",
+      "question": "When must a stolen card be reported?",
+      "in_corpus": true,
+      "answer": "According to [Source 1], a lost or stolen card must be reported \"immediately\" via the 24/7 Card Hotline, mobile app, or any branch.",
+      "citations": [
+        {
+          "source_idx": 1,
+          "doc_id": "TBP-POL-CI-001",
+          "doc_title": "Card Issuance & Management Policy",
+          "section": "Card Issuance & Management Policy > 4. Policy Statements > 4.5 Loss, Theft, and Card Blocking",
+          "chunk_id": "TBP-POL-CI-001::ch008"
+        }
+      ],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 390.4,
+      "generate_ms": 3575.3,
+      "total_ms": 3965.9,
+      "judge": {
+        "grounded": true,
+        "grounded_reasoning": "The answer directly restates a fact from Source 1, which explicitly states that customers must report loss or theft immediately.",
+        "citations_accurate": true,
+        "citations_reasoning": "The citation to Source 1 is accurate because the source does indeed contain the claim that a lost or stolen card must be reported immediately via the specified channels."
+      },
+      "correct_policy_cited": true,
+      "partial_match": {
+        "score": 1.0,
+        "missing": []
+      }
+    },
+    {
+      "id": "cards-002",
+      "question": "What is the standard card validity period?",
+      "in_corpus": true,
+      "answer": "The standard card validity period is 36 months [Source 1].",
+      "citations": [
+        {
+          "source_idx": 1,
+          "doc_id": "TBP-POL-CI-001",
+          "doc_title": "Card Issuance & Management Policy",
+          "section": "Card Issuance & Management Policy > 4. Policy Statements > 4.8 Renewals and Expiry",
+          "chunk_id": "TBP-POL-CI-001::ch011"
+        }
+      ],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 334.9,
+      "generate_ms": 4503.3,
+      "total_ms": 4838.4,
+      "judge": {
+        "grounded": true,
+        "grounded_reasoning": "The answer's factual claim about the standard card validity period is supported by Source 1, which states 'Standard card validity: 36 months'.",
+        "citations_accurate": true,
+        "citations_reasoning": "The citation [Source 1] in the answer accurately points to a source that contains the cited claim about the standard card validity period."
+      },
+      "correct_policy_cited": true,
+      "partial_match": {
+        "score": 1.0,
+        "missing": []
+      }
+    },
+    {
+      "id": "kyc-001",
+      "question": "What is the balance limit for a Tier-1 KYC account?",
+      "in_corpus": true,
+      "answer": "The balance limit for a Tier-1 KYC account is 50,000 KES [Source 2].",
+      "citations": [
+        {
+          "source_idx": 2,
+          "doc_id": "TBP-POL-KA-001",
+          "doc_title": "KYC & AML Compliance Policy",
+          "section": "KYC & AML Compliance Policy > 4. Policy Statements > 4.1 KYC Tiers",
+          "chunk_id": "TBP-POL-KA-001::ch004"
+        }
+      ],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 423.2,
+      "generate_ms": 5629.1,
+      "total_ms": 6054.0,
+      "judge": {
+        "grounded": true,
+        "grounded_reasoning": "The answer's factual claim about the balance limit for a Tier-1 KYC account is supported by Source 2, which states the balance limit as 50,000 KES.",
+        "citations_accurate": true,
+        "citations_reasoning": "The citation [Source 2] in the answer points to a source that actually contains the cited claim about the balance limit for a Tier-1 KYC account."
+      },
+      "correct_policy_cited": true,
+      "partial_match": {
+        "score": 1.0,
+        "missing": []
+      }
+    },
+    {
+      "id": "kyc-002",
+      "question": "How often are high-risk customer relationships reviewed?",
+      "in_corpus": true,
+      "answer": "High-risk customer relationships are reviewed every 12 months [Source 1].",
+      "citations": [
+        {
+          "source_idx": 1,
+          "doc_id": "TBP-POL-KA-001",
+          "doc_title": "KYC & AML Compliance Policy",
+          "section": "KYC & AML Compliance Policy > 4. Policy Statements > 4.9 Periodic Review",
+          "chunk_id": "TBP-POL-KA-001::ch012"
+        }
+      ],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 288.5,
+      "generate_ms": 4500.0,
+      "total_ms": 4788.7,
+      "judge": {
+        "grounded": true,
+        "grounded_reasoning": "The answer's claim that high-risk customer relationships are reviewed every 12 months is supported by Source 1, which states the review frequency for high-risk customers is every 12 months.",
+        "citations_accurate": true,
+        "citations_reasoning": "The citation [Source 1] in the answer accurately points to a source that contains the cited claim, specifically the review frequency for high-risk customer relationships."
+      },
+      "correct_policy_cited": true,
+      "partial_match": {
+        "score": 1.0,
+        "missing": []
+      }
+    },
+    {
+      "id": "incident-001",
+      "question": "What is the SEV1 response SLA?",
+      "in_corpus": true,
+      "answer": "The SEV1 response SLA is \"Response within 15 minutes\" [Source 1].",
+      "citations": [
+        {
+          "source_idx": 1,
+          "doc_id": "TBP-POL-IR-001",
+          "doc_title": "Incident Response Policy",
+          "section": "Incident Response Policy > 4. Policy Statements > 4.1 Severity Classification",
+          "chunk_id": "TBP-POL-IR-001::ch004"
+        }
+      ],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 382.9,
+      "generate_ms": 4505.9,
+      "total_ms": 4889.0,
+      "judge": {
+        "grounded": true,
+        "grounded_reasoning": "The answer directly restates a fact from Source 1, which explicitly states the SEV1 response SLA as 'Response within 15 minutes'.",
+        "citations_accurate": true,
+        "citations_reasoning": "The citation [Source 1] in the answer accurately points to the source that contains the cited claim about the SEV1 response SLA."
+      },
+      "correct_policy_cited": true,
+      "partial_match": {
+        "score": 1.0,
+        "missing": []
+      }
+    },
+    {
+      "id": "incident-002",
+      "question": "When is a post-incident review held?",
+      "in_corpus": true,
+      "answer": "A Post-Incident Review (PIR) is held within 10 business days of incident closure for SEV1, SEV2, and SEV3 incidents [Source 1].",
+      "citations": [
+        {
+          "source_idx": 1,
+          "doc_id": "TBP-POL-IR-001",
+          "doc_title": "Incident Response Policy",
+          "section": "Incident Response Policy > 4. Policy Statements > 4.8 Post-Incident Review",
+          "chunk_id": "TBP-POL-IR-001::ch011"
+        }
+      ],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 368.0,
+      "generate_ms": 3553.1,
+      "total_ms": 3921.3,
+      "judge": {
+        "grounded": true,
+        "grounded_reasoning": "The answer statement about when a post-incident review is held is directly supported by the provided source.",
+        "citations_accurate": true,
+        "citations_reasoning": "The citation [Source 1] accurately references the source that contains the claim about post-incident reviews being held within 10 business days of incident closure."
+      },
+      "correct_policy_cited": true,
+      "partial_match": {
+        "score": 1.0,
+        "missing": []
+      }
+    },
+    {
+      "id": "acceptable-001",
+      "question": "What must employees do if a Group laptop is lost or stolen?",
+      "in_corpus": true,
+      "answer": "According to [Source 2] and [Source 3], if a Group laptop is lost or stolen, employees must report it to the IT Service Desk within 1 hour for remote wipe. [Source 3] also reiterates this requirement, stating that lost or stolen devices must be reported within 1 hour.",
+      "citations": [
+        {
+          "source_idx": 2,
+          "doc_id": "TBP-POL-IS-001",
+          "doc_title": "Information Security Policy",
+          "section": "Information Security Policy > 4. Policy Statements > 4.5 Endpoint Security",
+          "chunk_id": "TBP-POL-IS-001::ch008"
+        },
+        {
+          "source_idx": 3,
+          "doc_id": "TBP-POL-AU-001",
+          "doc_title": "Acceptable Use Policy",
+          "section": "Acceptable Use Policy > 4. Policy Statements > 4.10 Reporting",
+          "chunk_id": "TBP-POL-AU-001::ch013"
+        }
+      ],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 158.6,
+      "generate_ms": 4782.4,
+      "total_ms": 4941.2,
+      "judge": {
+        "grounded": true,
+        "grounded_reasoning": "The answer's claim that employees must report a lost or stolen laptop within 1 hour is supported by both Source 2 and Source 3.",
+        "citations_accurate": true,
+        "citations_reasoning": "The citations to Source 2 and Source 3 accurately point to sources that contain the cited claim about reporting lost or stolen devices within 1 hour."
+      },
+      "correct_policy_cited": true,
+      "partial_match": {
+        "score": 1.0,
+        "missing": []
+      }
+    },
+    {
+      "id": "remote-001",
+      "question": "What is the monthly home-office allowance for remote employees?",
+      "in_corpus": true,
+      "answer": "The monthly home-office allowance for employees on hybrid or fully remote arrangements is 5,000 KES, paid to offset connectivity and utility costs [Source 1].",
+      "citations": [
+        {
+          "source_idx": 1,
+          "doc_id": "TBP-POL-RW-001",
+          "doc_title": "Remote Work Policy",
+          "section": "Remote Work Policy > 4. Policy Statements > 4.3 Equipment and Connectivity",
+          "chunk_id": "TBP-POL-RW-001::ch006"
+        }
+      ],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 275.3,
+      "generate_ms": 3579.5,
+      "total_ms": 3854.9,
+      "judge": {
+        "grounded": true,
+        "grounded_reasoning": "The answer directly restates a fact from Source 1, which explicitly mentions the monthly home-office allowance for remote employees.",
+        "citations_accurate": true,
+        "citations_reasoning": "The citation [Source 1] in the answer accurately points to the source that contains the cited claim about the monthly home-office allowance."
+      },
+      "correct_policy_cited": true,
+      "partial_match": {
+        "score": 1.0,
+        "missing": []
+      }
+    },
+    {
+      "id": "expense-001",
+      "question": "What approval is needed to spend 800,000 KES?",
+      "in_corpus": true,
+      "answer": "According to the Approval Authority Matrix [Source 3], spending between 250,001 to 1,000,000 KES requires approval from the Functional Director. Since 800,000 KES falls within this range, Functional Director approval is required.",
+      "citations": [
+        {
+          "source_idx": 3,
+          "doc_id": "TBP-POL-EP-001",
+          "doc_title": "Expense & Procurement Policy",
+          "section": "Expense & Procurement Policy > 4. Policy Statements > 4.1 Approval Authority Matrix",
+          "chunk_id": "TBP-POL-EP-001::ch004"
+        }
+      ],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 180.8,
+      "generate_ms": 5667.5,
+      "total_ms": 5848.4,
+      "judge": {
+        "grounded": true,
+        "grounded_reasoning": "The answer's claim about the required approval for spending 800,000 KES is supported by the Approval Authority Matrix in Source 3.",
+        "citations_accurate": true,
+        "citations_reasoning": "The reference to Source 3 in the answer accurately points to the source that contains the cited claim about the Approval Authority Matrix."
+      },
+      "correct_policy_cited": true,
+      "partial_match": {
+        "score": 1.0,
+        "missing": []
+      }
+    },
+    {
+      "id": "conduct-001",
+      "question": "What is the threshold for declaring a gift from a customer?",
+      "in_corpus": true,
+      "answer": "According to the Employee Code of Conduct [Source 1], gifts or hospitality above 5,000 KES must be declared in the Gifts Register within 5 business days. Modest, infrequent gifts under 5,000 KES may be accepted without declaration.",
+      "citations": [
+        {
+          "source_idx": 1,
+          "doc_id": "TBP-POL-EC-001",
+          "doc_title": "Employee Code of Conduct",
+          "section": "Employee Code of Conduct > 4. Policy Statements > 4.4 Gifts and Hospitality",
+          "chunk_id": "TBP-POL-EC-001::ch007"
+        }
+      ],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 239.4,
+      "generate_ms": 4615.0,
+      "total_ms": 4854.7,
+      "judge": {
+        "grounded": true,
+        "grounded_reasoning": "The answer's factual claims about the threshold for declaring gifts and the declaration process are directly supported by the provided source, Source 1, Employee Code of Conduct.",
+        "citations_accurate": true,
+        "citations_reasoning": "The citation [Source 1] in the answer accurately references the source that contains the cited claim about the gift declaration threshold and process."
+      },
+      "correct_policy_cited": true,
+      "partial_match": {
+        "score": 1.0,
+        "missing": []
+      }
+    },
+    {
+      "id": "bcdr-001",
+      "question": "What is the Recovery Time Objective for mobile banking?",
+      "in_corpus": true,
+      "answer": "The Recovery Time Objective (RTO) for mobile banking is 1 hour, as it is classified as a Tier-1 process, which includes \"Mission-critical (payments, card auth, ATM/POS, mobile banking)\" [Source 1].",
+      "citations": [
+        {
+          "source_idx": 1,
+          "doc_id": "TBP-POL-BC-001",
+          "doc_title": "Business Continuity & Disaster Recovery Policy",
+          "section": "Business Continuity & Disaster Recovery Policy > 4. Policy Statements > 4.2 Process Criticality and Recovery Targets",
+          "chunk_id": "TBP-POL-BC-001::ch005"
+        }
+      ],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 325.5,
+      "generate_ms": 4692.1,
+      "total_ms": 5018.3,
+      "judge": {
+        "grounded": true,
+        "grounded_reasoning": "The answer's factual claim about the Recovery Time Objective for mobile banking is supported by Source 1, which explicitly states the RTO for Tier-1 processes, including mobile banking, is 1 hour.",
+        "citations_accurate": true,
+        "citations_reasoning": "The citation [Source 1] in the answer accurately points to a source that contains the cited claim, specifically the table in section 4.2 of the Business Continuity & Disaster Recovery Policy."
+      },
+      "correct_policy_cited": true,
+      "partial_match": {
+        "score": 1.0,
+        "missing": []
+      }
+    },
+    {
+      "id": "ooc-001",
+      "question": "What is the best recipe for banana bread?",
+      "in_corpus": false,
+      "answer": "I can only answer questions about ThaBytePay policies. The provided context does not cover this topic.",
+      "citations": [],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 323.5,
+      "generate_ms": 4963.7,
+      "total_ms": 5287.8,
+      "correct_refusal": true
+    },
+    {
+      "id": "ooc-002",
+      "question": "What is the capital of France?",
+      "in_corpus": false,
+      "answer": "I can only answer questions about ThaBytePay policies. The provided context does not cover this topic.",
+      "citations": [],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 212.1,
+      "generate_ms": 3659.2,
+      "total_ms": 3871.4,
+      "correct_refusal": true
+    },
+    {
+      "id": "ooc-003",
+      "question": "Who won the 2022 FIFA World Cup?",
+      "in_corpus": false,
+      "answer": "I can only answer questions about ThaBytePay policies. The provided context does not cover this topic.",
+      "citations": [],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 54.6,
+      "generate_ms": 3510.3,
+      "total_ms": 3564.9,
+      "correct_refusal": true
+    },
+    {
+      "id": "ooc-004",
+      "question": "How do I fix a leaking kitchen tap?",
+      "in_corpus": false,
+      "answer": "I can only answer questions about ThaBytePay policies. The provided context does not cover this topic.",
+      "citations": [],
+      "out_of_corpus_pipeline": false,
+      "retrieve_ms": 241.3,
+      "generate_ms": 4806.3,
+      "total_ms": 5047.7,
+      "correct_refusal": true
+    }
+  ],
+  "wall_seconds": 153.3
+}

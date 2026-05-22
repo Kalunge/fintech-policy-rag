@@ -1,0 +1,28 @@
+# Caddy reverse proxy for the bundled FastAPI + Streamlit deployment.
+# Listens on $PORT (provided by Render), routes API paths to uvicorn on 8000,
+# everything else to Streamlit on 8501.
+
+{
+    # Disable Caddy's automatic HTTPS — Render terminates TLS upstream and
+    # talks to our container over HTTP only. Without this Caddy tries to
+    # negotiate certificates for a private hostname and refuses to start.
+    auto_https off
+    admin off
+}
+
+:{$PORT:8080} {
+    # API endpoints handled by FastAPI
+    @api {
+        path /chat /chat/* /health /health/* /docs /docs/* /openapi.json /redoc /redoc/*
+    }
+    reverse_proxy @api localhost:8000
+
+    # Everything else (UI, static assets, websockets) goes to Streamlit
+    reverse_proxy localhost:8501
+
+    encode gzip
+    log {
+        output stdout
+        format console
+    }
+}

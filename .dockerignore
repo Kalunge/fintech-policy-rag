@@ -1,0 +1,46 @@
+# Keep the build context lean.
+.env
+.env.*
+venv/
+.venv/
+env/
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+
+# Vector store — rebuilt during docker build
+chromadb/
+.cache/
+.hf_cache/
+
+# Git history not needed in the image
+.git/
+.github/
+
+# Local docs and AI config (gitignored anyway, belt and braces)
+docs/
+CLAUDE.md
+
+# Evaluation outputs that change every run
+evaluation/results.json
+evaluation/latency.json
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Project assignment PDF and Streamlit config dirs
+*.pdf
+.streamlit/
