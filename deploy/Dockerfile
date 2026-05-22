@@ -6,10 +6,12 @@
 # Run:
 #     docker run -p 8080:8080 -e PORT=8080 -e GROQ_API_KEY=$GROQ_API_KEY fintech-policy-rag
 
-# Stage 1 — grab the Caddy binary from its official image.
-FROM caddy:2.8 AS caddy_src
-
-# Stage 2 — Python runtime with our app and Caddy installed.
+# Python runtime with our app and a directly-downloaded Caddy binary.
+# Note: we deliberately avoid copying Caddy from the official caddy image —
+# that binary carries cap_net_bind_service file capabilities that some
+# container runtimes (notably Render's) refuse to exec, returning EPERM
+# ("Operation not permitted") even though we never bind a privileged port.
+# Downloading the static release binary from GitHub avoids the issue.
 FROM python:3.11-slim
 
 ENV PYTHONUNBUFFERED=1 \
@@ -25,9 +27,14 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Caddy binary from stage 1. The chmod is needed because Render's image registry
-# can strip the executable bit during multi-stage COPY; --chmod sets it explicitly.
-COPY --from=caddy_src --chmod=0755 /usr/bin/caddy /usr/local/bin/caddy
+# Download Caddy directly from the official GitHub release (static binary, no caps).
+ARG CADDY_VERSION=2.8.4
+RUN curl -fsSL "https://github.com/caddyserver/caddy/releases/download/v${CADDY_VERSION}/caddy_${CADDY_VERSION}_linux_amd64.tar.gz" \
+        -o /tmp/caddy.tar.gz \
+    && tar -xzf /tmp/caddy.tar.gz -C /usr/local/bin caddy \
+    && chmod +x /usr/local/bin/caddy \
+    && rm /tmp/caddy.tar.gz \
+    && /usr/local/bin/caddy version
 
 # Python dependencies (cached separately from source for faster rebuilds)
 COPY requirements.txt .
