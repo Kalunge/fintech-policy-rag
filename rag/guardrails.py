@@ -16,7 +16,9 @@ from langchain_core.documents import Document
 # Calibrated against the eval set in Phase 7; loose default for now.
 OUT_OF_CORPUS_DISTANCE = 1.2
 
-CITATION_PATTERN = re.compile(r"\[Source\s+(\d+)\]", flags=re.IGNORECASE)
+# Matches any "Source N" reference, regardless of bracket structure.
+# Catches all of:  [Source 1]  [Source 1, Source 2]  (Source 1)  Source 1 and Source 2
+CITATION_PATTERN = re.compile(r"Source\s+(\d+)", flags=re.IGNORECASE)
 
 
 def is_out_of_corpus(retrieved_with_scores: list[tuple[Document, float]]) -> bool:
@@ -28,7 +30,11 @@ def is_out_of_corpus(retrieved_with_scores: list[tuple[Document, float]]) -> boo
 
 
 def extract_citation_indices(answer: str) -> list[int]:
-    """Return sorted unique 1-based source numbers cited in the answer."""
+    """Return sorted unique 1-based source numbers cited in the answer.
+
+    Lenient: finds 'Source N' anywhere in the text, so multi-source brackets like
+    [Source 1, Source 2] are captured correctly.
+    """
     matches = CITATION_PATTERN.findall(answer)
     return sorted({int(m) for m in matches})
 

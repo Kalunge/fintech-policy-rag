@@ -38,6 +38,14 @@ def _build_snippet(doc: Document, source_idx: int) -> dict[str, Any]:
     return {"source_idx": source_idx, "snippet": snippet}
 
 
+def _build_full_chunk(doc: Document, source_idx: int) -> dict[str, Any]:
+    """Untruncated chunk content for the eval judge. Not exposed via the public API."""
+    return {
+        "source_idx": source_idx,
+        "snippet": (doc.page_content or "").strip(),
+    }
+
+
 class RAGPipeline:
     """Single-call entry point for the assistant."""
 
@@ -59,6 +67,7 @@ class RAGPipeline:
                 "answer": REFUSAL_TEMPLATE,
                 "citations": [],
                 "snippets": [],
+                "full_chunks": [],
                 "out_of_corpus": True,
                 "retrieve_ms": round(retrieve_ms, 1),
                 "generate_ms": 0.0,
@@ -87,15 +96,18 @@ class RAGPipeline:
         cited_indices = extract_citation_indices(answer_text)
         citations: list[dict[str, Any]] = []
         snippets: list[dict[str, Any]] = []
+        full_chunks: list[dict[str, Any]] = []
         for idx in cited_indices:
             if 1 <= idx <= len(docs):
                 citations.append(_build_citation(docs[idx - 1], idx))
                 snippets.append(_build_snippet(docs[idx - 1], idx))
+                full_chunks.append(_build_full_chunk(docs[idx - 1], idx))
 
         return {
             "answer": answer_text,
             "citations": citations,
             "snippets": snippets,
+            "full_chunks": full_chunks,
             "out_of_corpus": False,
             "retrieve_ms": round(retrieve_ms, 1),
             "generate_ms": round(generate_ms, 1),

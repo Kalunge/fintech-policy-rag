@@ -97,5 +97,6 @@ async def chat(request: Request, payload: ChatRequest) -> ChatResponse:
         log.exception("Pipeline failure for question: %r", payload.question)
         raise HTTPException(status_code=500, detail="Internal error generating the answer.") from exc
 
-    # ChatResponse will silently drop retrieval_debug; that's intentional.
-    return ChatResponse(**result)
+    # ChatResponse silently drops internal fields (retrieval_debug, full_chunks).
+    # That's intentional — those are for evaluation, not the public API.
+    return ChatResponse(**{k: v for k, v in result.items() if k in ChatResponse.model_fields})
