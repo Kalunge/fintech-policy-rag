@@ -36,6 +36,18 @@ class ChatResponse(BaseModel):
     total_ms: float
 
 
+class ToolCall(BaseModel):
+    tool: str
+    args: dict
+    summary: str
+    result: dict | str | None = None
+
+
+class AgentChatResponse(ChatResponse):
+    tool_calls: list[ToolCall] = []
+    iterations: int = 0
+
+
 class HealthResponse(BaseModel):
     status: str
     ready: bool
