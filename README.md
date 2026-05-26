@@ -117,12 +117,10 @@ The whole pipeline is in `rag/` with one file per concern (`retrieval.py`,
 - A Groq API key — sign up at [console.groq.com](https://console.groq.com)
   (free tier is plenty)
 
-> **Cohere API key is OPTIONAL.** The project defaults to a local embedding
-> model (`bge-small`) that runs in-process with no external API calls. You
-> only need a Cohere key if you set `EMBEDDING_BACKEND=cohere`, which is what
-> the live deployment uses for faster production embedding. For local
-> evaluation, exploration, and testing the default `EMBEDDING_BACKEND=local`
-> works without any Cohere key.
+> **Cohere API key is OPTIONAL** if you stick with the local embedding
+> backend below. The live deployment uses Cohere because hosted embeddings
+> are much faster on small cloud instances; for local exploration the
+> default local backend works without any Cohere signup.
 
 ### Local development
 
@@ -133,11 +131,23 @@ cd fintech-policy-rag
 python3.11 -m venv venv
 source venv/bin/activate
 
+# Base dependencies (production-lean — uses Cohere for embedding)
 pip install -r requirements.txt
+
+# ALSO install this if you want to run the offline `local` embedding
+# backend (no Cohere key needed):
+pip install -r requirements-local.txt
 
 cp .env.example .env
 # edit .env and paste your GROQ_API_KEY
+# (COHERE_API_KEY is only needed if you set EMBEDDING_BACKEND=cohere)
 ```
+
+> **Why two requirements files?** The local backend needs PyTorch and
+> sentence-transformers (~250 MB of resident memory) which exceed the
+> 512 MB RAM budget on Render's free tier. Production therefore installs
+> only `requirements.txt` and uses Cohere. Local dev installs both files
+> and the bge-small backend stays available offline.
 
 ### Build the vector store
 
@@ -175,12 +185,23 @@ Then visit `http://localhost:8501` for the chat UI, or
 
 ### Run with Docker (everything in one container)
 
+The image is production-shaped — it omits PyTorch and uses the Cohere
+embedding backend. Pass your Cohere key as both a build arg (so ingestion
+runs against Cohere) and a runtime env var (so queries do too):
+
 ```bash
-docker build -t fintech-policy-rag -f deploy/Dockerfile .
+COHERE_KEY="$(grep COHERE_API_KEY .env | cut -d= -f2)"
+
+docker build \
+    --build-arg EMBEDDING_BACKEND=cohere \
+    --build-arg COHERE_API_KEY="$COHERE_KEY" \
+    -t fintech-policy-rag -f deploy/Dockerfile .
 
 docker run -p 8080:8080 \
     -e PORT=8080 \
     -e GROQ_API_KEY="$(grep GROQ_API_KEY .env | cut -d= -f2)" \
+    -e EMBEDDING_BACKEND=cohere \
+    -e COHERE_API_KEY="$COHERE_KEY" \
     fintech-policy-rag
 ```
 
@@ -224,7 +245,7 @@ The system supports two embedding backends, selected by the
 
 | Value | Model | Vector dim | Cost | Use case |
 |---|---|---|---|---|
-| `local` (default) | `BAAI/bge-small-en-v1.5` | 384 | Free, no key | Local dev, offline work, grader exploration |
+| `local` (default) | `BAAI/bge-small-en-v1.5` | 384 | Free, no key | Local dev, offline work, signup-free exploration |
 | `cohere` | `embed-english-v3.0` | 1024 | Cohere free tier | Production deployment for speed |
 
 **For evaluation / exploration: do nothing.** Default is `local` and works
@@ -343,7 +364,8 @@ fintech-policy-rag/
 ├── .github/workflows/
 │   └── ci.yml                    test → deploy-on-green pipeline
 │
-├── requirements.txt              pinned with --extra-index-url for CPU torch
+├── requirements.txt              production-lean (Cohere backend)
+├── requirements-local.txt        adds torch + sentence-transformers for offline local backend
 ├── README.md                     this file
 ├── design-and-evaluation.md      design rationale + eval results
 ├── ai-tooling.md                 how AI was used in the build

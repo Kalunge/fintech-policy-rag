@@ -1,0 +1,20 @@
+# Additional dependencies for the offline `local` (bge-small) embedding
+# backend. Pull these on top of requirements.txt with:
+#
+#     pip install -r requirements.txt -r requirements-local.txt
+#
+# These are not in requirements.txt because:
+#   - torch alone is ~250 MB of RAM at runtime; on a 512 MB free-tier host
+#     (Render's free instance) it pushes the process to OOM
+#   - sentence-transformers and the bge-small weights add ~150 MB to the
+#     Docker image
+#   - The Cohere backend (the production default) doesn't need any of this
+#
+# The CPU-only PyTorch wheel index avoids pulling ~2 GB of NVIDIA CUDA
+# libraries that are irrelevant for inference on the developer laptop.
+
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+langchain-huggingface>=0.1.0
+sentence-transformers>=3.0.0
+torch>=2.0,<3.0

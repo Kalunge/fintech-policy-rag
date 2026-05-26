@@ -20,7 +20,10 @@ jobs:
           cache: pip
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        # CI ingests + tests against the offline `local` (bge-small) backend
+        # so it stays self-contained and doesn't burn Cohere quota. Production
+        # uses Cohere; the API surface is identical either way.
+        run: pip install -r requirements.txt -r requirements-local.txt
 
       - name: Build the Chroma vector store
         run: python scripts/ingest.py --clear
