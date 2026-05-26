@@ -14,6 +14,7 @@ render what the agent did.
 from __future__ import annotations
 
 import json
+import re
 import time
 from typing import Any
 
@@ -33,6 +34,16 @@ from tools.errors import ToolError
 
 
 MAX_ITERATIONS = 4
+
+# Pattern that matches Llama's native tool-call syntax leaking into plain text:
+#   <function=name{json args}</function>
+#   <function(name){json args}</function>
+# Captures the tool name and the JSON arg blob for manual execution.
+_LEAKED_TOOL_CALL = re.compile(
+    r"<function[=\(](?P<name>[A-Za-z_][A-Za-z0-9_]*)\)?\s*(?P<args>\{.*?\})\s*</function>",
+    flags=re.DOTALL,
+)
+
 
 AGENT_SYSTEM_PROMPT = """You are the ThaBytePay Policy and Operations Assistant.
 
@@ -308,6 +319,51 @@ class AgenticPipeline:
                 answer_text = (
                     "I ran into a problem processing that question. "
                     f"Please try rephrasing it. (Internal: {type(exc).__name__})"
+                )
+
+        # Second Groq+Llama failure mode: the model emits its native
+        # <function=name{args}</function> or <function(name){args}</function>
+        # syntax as plain text content. Groq doesn't reject it (no exception
+        # raised), and LangChain doesn't recognise it as a tool call either,
+        # so the raw XML-ish text leaks through to the user. Detect and
+        # execute manually.
+        leaked = _LEAKED_TOOL_CALL.search(answer_text)
+        if leaked:
+            tool_name = leaked.group("name")
+            try:
+                args_dict = json.loads(leaked.group("args"))
+            except json.JSONDecodeError:
+                args_dict = {}
+            fn = getattr(banking, tool_name, None)
+            if callable(fn):
+                try:
+                    tool_result = fn(**args_dict)
+                    summary = "ok"
+                except ToolError as exc:
+                    tool_result = exc.as_dict()
+                    summary = f"error: {exc.code}"
+                tool_calls.append(
+                    {
+                        "tool": tool_name,
+                        "args": args_dict,
+                        "summary": f"recovered from leaked tool call; {summary}",
+                        "result": tool_result,
+                    }
+                )
+                if isinstance(tool_result, dict) and tool_result.get("error"):
+                    answer_text = (
+                        f"Tool {tool_name} returned an error: "
+                        f"{tool_result.get('message', 'unknown error')}"
+                    )
+                else:
+                    answer_text = (
+                        f"Result from {tool_name}: " + json.dumps(tool_result, indent=2)
+                    )
+            else:
+                # Unknown tool name — fall back to a generic message
+                answer_text = (
+                    "The model attempted a tool call I couldn't execute. "
+                    "Please rephrase the question."
                 )
 
         generate_ms = (time.time() - t_generate) * 1000
