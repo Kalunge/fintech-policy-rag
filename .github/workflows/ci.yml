@@ -28,7 +28,10 @@ jobs:
           PYTHONPATH: .
 
       - name: Run tests
-        run: pytest tests/ -v
+        # --live opts into tests that make real LLM API calls. CI has the
+        # GROQ_API_KEY secret available so the full suite runs end-to-end.
+        # Local dev defaults to skipping live tests to protect daily quota.
+        run: pytest tests/ -v --live
         env:
           PYTHONPATH: .
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}

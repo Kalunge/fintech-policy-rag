@@ -43,6 +43,7 @@ def test_chat_rejects_empty_question(client: TestClient) -> None:
     assert resp.status_code == 422
 
 
+@pytest.mark.live
 def test_chat_returns_grounded_answer(client: TestClient) -> None:
     resp = client.post(
         "/chat",
@@ -58,6 +59,7 @@ def test_chat_returns_grounded_answer(client: TestClient) -> None:
     assert data["total_ms"] > 0
 
 
+@pytest.mark.live
 def test_chat_out_of_corpus_refusal(client: TestClient) -> None:
     resp = client.post(
         "/chat",

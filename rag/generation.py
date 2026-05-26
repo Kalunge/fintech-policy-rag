@@ -2,6 +2,7 @@
 from langchain_groq import ChatGroq
 
 from rag.config import GROQ_API_KEY, LLM_MODEL
+from rag.llm_cache import maybe_install_cache
 
 
 def get_llm(
@@ -21,6 +22,9 @@ def get_llm(
         raise RuntimeError(
             "GROQ_API_KEY is not set. Add it to .env or your environment."
         )
+
+    # Optional dev-only LLM response cache. No-op in production.
+    maybe_install_cache()
 
     return ChatGroq(
         model=LLM_MODEL,

@@ -15,6 +15,7 @@ __pycache__/
 chromadb/
 .cache/
 .hf_cache/
+.llm_cache.db
 
 # Git history not needed in the image
 .git/
