@@ -90,7 +90,12 @@ async def health(request: Request) -> HealthResponse:
 
 
 @app.post("/chat", response_model=ChatResponse)
-async def chat(request: Request, payload: ChatRequest) -> ChatResponse:
+def chat(request: Request, payload: ChatRequest) -> ChatResponse:
+    # Sync route: pipeline.answer() makes blocking HTTPS calls to Cohere and
+    # Groq. Declaring this `async def` would freeze the FastAPI event loop for
+    # the duration of every request, including /health probes — Render then
+    # kills the instance after a 5s health timeout. Sync routes run in a
+    # thread pool, leaving the loop free.
     if not getattr(request.app.state, "ready", False):
         raise HTTPException(status_code=503, detail="Service warming up, please retry shortly.")
 
@@ -107,7 +112,7 @@ async def chat(request: Request, payload: ChatRequest) -> ChatResponse:
 
 
 @app.post("/chat/agent", response_model=AgentChatResponse)
-async def chat_agent(request: Request, payload: ChatRequest) -> AgentChatResponse:
+def chat_agent(request: Request, payload: ChatRequest) -> AgentChatResponse:
     """Agentic version of /chat — same interface but the LLM can also call
     banking tools (agent balance, transaction lookup, terminal status,
     compliance scorecard, mock deposit) in addition to searching policies.
