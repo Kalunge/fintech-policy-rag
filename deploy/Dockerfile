@@ -46,6 +46,7 @@ COPY api/ ./api/
 COPY ui/ ./ui/
 COPY scripts/ ./scripts/
 COPY corpus/ ./corpus/
+COPY tools/ ./tools/
 COPY deploy/ ./deploy/
 
 # Ensure start.sh is executable inside the image (same registry stripping risk).

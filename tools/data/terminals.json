@@ -1,0 +1,134 @@
+[
+  {
+    "terminal_id": "TID-001",
+    "merchant_id": "MID-501",
+    "merchant_name": "Bidii Supermarket",
+    "model": "Verifone V200c",
+    "status": "online",
+    "last_seen": "2026-05-25T08:45:23Z",
+    "last_transaction_ref": "TXN-1042",
+    "deployment_date": "2024-08-10",
+    "location": "Westlands, Nairobi"
+  },
+  {
+    "terminal_id": "TID-002",
+    "merchant_id": "MID-502",
+    "merchant_name": "Tasty Bites Restaurant",
+    "model": "Pax A920",
+    "status": "online",
+    "last_seen": "2026-05-25T08:42:11Z",
+    "last_transaction_ref": "TXN-1040",
+    "deployment_date": "2024-11-03",
+    "location": "Kilimani, Nairobi"
+  },
+  {
+    "terminal_id": "TID-003",
+    "merchant_id": "MID-503",
+    "merchant_name": "Coastline Pharmacy",
+    "model": "Ingenico Move 5000",
+    "status": "offline",
+    "last_seen": "2026-05-24T19:12:47Z",
+    "last_transaction_ref": "TXN-1015",
+    "deployment_date": "2023-06-21",
+    "location": "Nyali, Mombasa"
+  },
+  {
+    "terminal_id": "TID-004",
+    "merchant_id": "MID-504",
+    "merchant_name": "Lake Breeze Hotel",
+    "model": "Verifone V200c",
+    "status": "online",
+    "last_seen": "2026-05-25T08:30:55Z",
+    "last_transaction_ref": "TXN-1036",
+    "deployment_date": "2024-02-14",
+    "location": "Kisumu CBD, Kisumu"
+  },
+  {
+    "terminal_id": "TID-005",
+    "merchant_id": "MID-505",
+    "merchant_name": "Spareparts Plus",
+    "model": "Pax A920",
+    "status": "online",
+    "last_seen": "2026-05-25T08:38:02Z",
+    "last_transaction_ref": "TXN-1038",
+    "deployment_date": "2024-09-30",
+    "location": "Industrial Area, Nairobi"
+  },
+  {
+    "terminal_id": "TID-006",
+    "merchant_id": "MID-506",
+    "merchant_name": "Highlands Boutique",
+    "model": "Ingenico Move 5000",
+    "status": "tamper_suspended",
+    "last_seen": "2026-05-23T14:55:00Z",
+    "last_transaction_ref": "TXN-1008",
+    "deployment_date": "2023-11-18",
+    "location": "Eldoret CBD, Uasin Gishu"
+  },
+  {
+    "terminal_id": "TID-007",
+    "merchant_id": "MID-507",
+    "merchant_name": "Quick Mart Garissa",
+    "model": "Verifone V200c",
+    "status": "online",
+    "last_seen": "2026-05-25T08:20:18Z",
+    "last_transaction_ref": "TXN-1031",
+    "deployment_date": "2024-05-07",
+    "location": "Garissa Town, Garissa"
+  },
+  {
+    "terminal_id": "TID-008",
+    "merchant_id": "MID-508",
+    "merchant_name": "Java Espresso Bar",
+    "model": "SoftPOS Lite",
+    "status": "online",
+    "last_seen": "2026-05-25T08:44:09Z",
+    "last_transaction_ref": "TXN-1041",
+    "deployment_date": "2025-01-22",
+    "location": "Karen, Nairobi"
+  },
+  {
+    "terminal_id": "TID-009",
+    "merchant_id": "MID-509",
+    "merchant_name": "Greenhills Hardware",
+    "model": "Pax A920",
+    "status": "offline",
+    "last_seen": "2026-05-25T03:11:30Z",
+    "last_transaction_ref": "TXN-1019",
+    "deployment_date": "2023-12-05",
+    "location": "Nakuru CBD, Nakuru"
+  },
+  {
+    "terminal_id": "TID-010",
+    "merchant_id": "MID-510",
+    "merchant_name": "Riverside Petrol",
+    "model": "Verifone V200c",
+    "status": "online",
+    "last_seen": "2026-05-25T08:46:55Z",
+    "last_transaction_ref": "TXN-1043",
+    "deployment_date": "2024-07-11",
+    "location": "Thika Road, Kiambu"
+  },
+  {
+    "terminal_id": "TID-011",
+    "merchant_id": "MID-511",
+    "merchant_name": "Equator Bookstore",
+    "model": "SoftPOS Lite",
+    "status": "online",
+    "last_seen": "2026-05-25T08:33:12Z",
+    "last_transaction_ref": "TXN-1037",
+    "deployment_date": "2025-03-04",
+    "location": "Nanyuki, Laikipia"
+  },
+  {
+    "terminal_id": "TID-012",
+    "merchant_id": "MID-512",
+    "merchant_name": "Savanna Tours Agency",
+    "model": "Ingenico Move 5000",
+    "status": "online",
+    "last_seen": "2026-05-25T08:25:44Z",
+    "last_transaction_ref": "TXN-1034",
+    "deployment_date": "2023-08-19",
+    "location": "Maasai Mall, Narok"
+  }
+]

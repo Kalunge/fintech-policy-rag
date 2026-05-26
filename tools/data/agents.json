@@ -1,0 +1,402 @@
+[
+  {
+    "agent_id": "AG-001",
+    "business_name": "Pwani Cash Point",
+    "owner_name": "Aisha Mohamed",
+    "tier": "Tier-3",
+    "location": {"town": "Mombasa", "county": "Mombasa"},
+    "status": "active",
+    "float_balance_kes": 2840000,
+    "float_minimum_kes": 500000,
+    "settlement_account": "0102345678900",
+    "onboarded_date": "2023-04-15",
+    "last_updated": "2026-05-25T08:12:00Z",
+    "scorecard": {
+      "period": "2026-04",
+      "kyc_completeness_pct": 98.5,
+      "transaction_reversal_rate_pct": 0.3,
+      "customer_complaints": 1,
+      "float_discipline_score": 4.8
+    }
+  },
+  {
+    "agent_id": "AG-002",
+    "business_name": "Mama Mboga Quick Pay",
+    "owner_name": "Joyce Wanjiku",
+    "tier": "Tier-1",
+    "location": {"town": "Nairobi", "county": "Nairobi"},
+    "status": "active",
+    "float_balance_kes": 42000,
+    "float_minimum_kes": 50000,
+    "settlement_account": "0102345678901",
+    "onboarded_date": "2024-09-02",
+    "last_updated": "2026-05-25T07:51:00Z",
+    "scorecard": {
+      "period": "2026-04",
+      "kyc_completeness_pct": 92.0,
+      "transaction_reversal_rate_pct": 1.2,
+      "customer_complaints": 0,
+      "float_discipline_score": 3.5
+    }
+  },
+  {
+    "agent_id": "AG-003",
+    "business_name": "Kisumu Lake Agency",
+    "owner_name": "Brian Otieno",
+    "tier": "Tier-2",
+    "location": {"town": "Kisumu", "county": "Kisumu"},
+    "status": "active",
+    "float_balance_kes": 380000,
+    "float_minimum_kes": 200000,
+    "settlement_account": "0102345678902",
+    "onboarded_date": "2024-03-20",
+    "last_updated": "2026-05-25T08:02:00Z",
+    "scorecard": {
+      "period": "2026-04",
+      "kyc_completeness_pct": 95.4,
+      "transaction_reversal_rate_pct": 0.8,
+      "customer_complaints": 2,
+      "float_discipline_score": 4.2
+    }
+  },
+  {
+    "agent_id": "AG-004",
+    "business_name": "Eldoret Smart Pay",
+    "owner_name": "Faith Cheruiyot",
+    "tier": "Master",
+    "location": {"town": "Eldoret", "county": "Uasin Gishu"},
+    "status": "active",
+    "float_balance_kes": 8200000,
+    "float_minimum_kes": 1500000,
+    "settlement_account": "0102345678903",
+    "onboarded_date": "2022-11-10",
+    "last_updated": "2026-05-25T08:14:00Z",
+    "scorecard": {
+      "period": "2026-04",
+      "kyc_completeness_pct": 99.2,
+      "transaction_reversal_rate_pct": 0.1,
+      "customer_complaints": 0,
+      "float_discipline_score": 4.9
+    }
+  },
+  {
+    "agent_id": "AG-005",
+    "business_name": "Nakuru Express Cash",
+    "owner_name": "Daniel Kamau",
+    "tier": "Tier-2",
+    "location": {"town": "Nakuru", "county": "Nakuru"},
+    "status": "active",
+    "float_balance_kes": 95000,
+    "float_minimum_kes": 200000,
+    "settlement_account": "0102345678904",
+    "onboarded_date": "2024-06-18",
+    "last_updated": "2026-05-25T07:33:00Z",
+    "scorecard": {
+      "period": "2026-04",
+      "kyc_completeness_pct": 88.7,
+      "transaction_reversal_rate_pct": 2.1,
+      "customer_complaints": 4,
+      "float_discipline_score": 2.8
+    }
+  },
+  {
+    "agent_id": "AG-006",
+    "business_name": "Coastal Wallet Hub",
+    "owner_name": "Mwangi Salim",
+    "tier": "Tier-3",
+    "location": {"town": "Malindi", "county": "Kilifi"},
+    "status": "active",
+    "float_balance_kes": 1250000,
+    "float_minimum_kes": 500000,
+    "settlement_account": "0102345678905",
+    "onboarded_date": "2023-08-05",
+    "last_updated": "2026-05-25T08:09:00Z",
+    "scorecard": {
+      "period": "2026-04",
+      "kyc_completeness_pct": 97.1,
+      "transaction_reversal_rate_pct": 0.5,
+      "customer_complaints": 1,
+      "float_discipline_score": 4.6
+    }
+  },
+  {
+    "agent_id": "AG-007",
+    "business_name": "Nyeri Mountain Pay",
+    "owner_name": "Grace Wairimu",
+    "tier": "Tier-1",
+    "location": {"town": "Nyeri", "county": "Nyeri"},
+    "status": "active",
+    "float_balance_kes": 58000,
+    "float_minimum_kes": 50000,
+    "settlement_account": "0102345678906",
+    "onboarded_date": "2024-12-11",
+    "last_updated": "2026-05-25T07:48:00Z",
+    "scorecard": {
+      "period": "2026-04",
+      "kyc_completeness_pct": 93.5,
+      "transaction_reversal_rate_pct": 0.9,
+      "customer_complaints": 0,
+      "float_discipline_score": 4.0
+    }
+  },
+  {
+    "agent_id": "AG-008",
+    "business_name": "Thika Road Cash",
+    "owner_name": "Peter Njoroge",
+    "tier": "Tier-2",
+    "location": {"town": "Thika", "county": "Kiambu"},
+    "status": "suspended",
+    "float_balance_kes": 0,
+    "float_minimum_kes": 200000,
+    "settlement_account": "0102345678907",
+    "onboarded_date": "2023-12-01",
+    "last_updated": "2026-05-12T11:30:00Z",
+    "scorecard": {
+      "period": "2026-04",
+      "kyc_completeness_pct": 71.2,
+      "transaction_reversal_rate_pct": 5.8,
+      "customer_complaints": 12,
+      "float_discipline_score": 1.4
+    }
+  },
+  {
+    "agent_id": "AG-009",
+    "business_name": "Garissa Trust Agency",
+    "owner_name": "Hassan Ibrahim",
+    "tier": "Tier-3",
+    "location": {"town": "Garissa", "county": "Garissa"},
+    "status": "active",
+    "float_balance_kes": 740000,
+    "float_minimum_kes": 500000,
+    "settlement_account": "0102345678908",
+    "onboarded_date": "2024-01-22",
+    "last_updated": "2026-05-25T08:00:00Z",
+    "scorecard": {
+      "period": "2026-04",
+      "kyc_completeness_pct": 96.0,
+      "transaction_reversal_rate_pct": 0.6,
+      "customer_complaints": 1,
+      "float_discipline_score": 4.5
+    }
+  },
+  {
+    "agent_id": "AG-010",
+    "business_name": "Westlands Wallet Pro",
+    "owner_name": "Linet Atieno",
+    "tier": "Master",
+    "location": {"town": "Nairobi", "county": "Nairobi"},
+    "status": "active",
+    "float_balance_kes": 12500000,
+    "float_minimum_kes": 1500000,
+    "settlement_account": "0102345678909",
+    "onboarded_date": "2022-05-30",
+    "last_updated": "2026-05-25T08:16:00Z",
+    "scorecard": {
+      "period": "2026-04",
+      "kyc_completeness_pct": 99.8,
+      "transaction_reversal_rate_pct": 0.05,
+      "customer_complaints": 0,
+      "float_discipline_score": 5.0
+    }
+  },
+  {
+    "agent_id": "AG-011",
+    "business_name": "Kakamega Hill Pay",
+    "owner_name": "Stephen Mukuna",
+    "tier": "Tier-1",
+    "location": {"town": "Kakamega", "county": "Kakamega"},
+    "status": "active",
+    "float_balance_kes": 38000,
+    "float_minimum_kes": 50000,
+    "settlement_account": "0102345678910",
+    "onboarded_date": "2024-10-08",
+    "last_updated": "2026-05-25T07:21:00Z",
+    "scorecard": {
+      "period": "2026-04",
+      "kyc_completeness_pct": 90.0,
+      "transaction_reversal_rate_pct": 1.7,
+      "customer_complaints": 2,
+      "float_discipline_score": 3.2
+    }
+  },
+  {
+    "agent_id": "AG-012",
+    "business_name": "Machakos Town Agency",
+    "owner_name": "Ruth Mutua",
+    "tier": "Tier-2",
+    "location": {"town": "Machakos", "county": "Machakos"},
+    "status": "active",
+    "float_balance_kes": 215000,
+    "float_minimum_kes": 200000,
+    "settlement_account": "0102345678911",
+    "onboarded_date": "2024-02-14",
+    "last_updated": "2026-05-25T08:04:00Z",
+    "scorecard": {
+      "period": "2026-04",
+      "kyc_completeness_pct": 94.2,
+      "transaction_reversal_rate_pct": 1.0,
+      "customer_complaints": 1,
+      "float_discipline_score": 4.1
+    }
+  },
+  {
+    "agent_id": "AG-013",
+    "business_name": "Meru Highlands Cash",
+    "owner_name": "John Mutindi",
+    "tier": "Tier-3",
+    "location": {"town": "Meru", "county": "Meru"},
+    "status": "active",
+    "float_balance_kes": 1820000,
+    "float_minimum_kes": 500000,
+    "settlement_account": "0102345678912",
+    "onboarded_date": "2023-07-19",
+    "last_updated": "2026-05-25T08:11:00Z",
+    "scorecard": {
+      "period": "2026-04",
+      "kyc_completeness_pct": 97.8,
+      "transaction_reversal_rate_pct": 0.4,
+      "customer_complaints": 0,
+      "float_discipline_score": 4.7
+    }
+  },
+  {
+    "agent_id": "AG-014",
+    "business_name": "Kitale Maize Pay",
+    "owner_name": "Esther Wangari",
+    "tier": "Tier-2",
+    "location": {"town": "Kitale", "county": "Trans-Nzoia"},
+    "status": "active",
+    "float_balance_kes": 175000,
+    "float_minimum_kes": 200000,
+    "settlement_account": "0102345678913",
+    "onboarded_date": "2024-05-04",
+    "last_updated": "2026-05-25T07:58:00Z",
+    "scorecard": {
+      "period": "2026-04",
+      "kyc_completeness_pct": 91.5,
+      "transaction_reversal_rate_pct": 1.4,
+      "customer_complaints": 3,
+      "float_discipline_score": 3.7
+    }
+  },
+  {
+    "agent_id": "AG-015",
+    "business_name": "Embu River Agency",
+    "owner_name": "Patrick Mwangi",
+    "tier": "Tier-1",
+    "location": {"town": "Embu", "county": "Embu"},
+    "status": "active",
+    "float_balance_kes": 71000,
+    "float_minimum_kes": 50000,
+    "settlement_account": "0102345678914",
+    "onboarded_date": "2025-01-15",
+    "last_updated": "2026-05-25T07:42:00Z",
+    "scorecard": {
+      "period": "2026-04",
+      "kyc_completeness_pct": 95.0,
+      "transaction_reversal_rate_pct": 0.7,
+      "customer_complaints": 0,
+      "float_discipline_score": 4.3
+    }
+  },
+  {
+    "agent_id": "AG-016",
+    "business_name": "Karen Suburb Pay",
+    "owner_name": "Christine Adhiambo",
+    "tier": "Tier-3",
+    "location": {"town": "Nairobi", "county": "Nairobi"},
+    "status": "active",
+    "float_balance_kes": 920000,
+    "float_minimum_kes": 500000,
+    "settlement_account": "0102345678915",
+    "onboarded_date": "2023-10-25",
+    "last_updated": "2026-05-25T08:05:00Z",
+    "scorecard": {
+      "period": "2026-04",
+      "kyc_completeness_pct": 98.0,
+      "transaction_reversal_rate_pct": 0.3,
+      "customer_complaints": 1,
+      "float_discipline_score": 4.6
+    }
+  },
+  {
+    "agent_id": "AG-017",
+    "business_name": "Voi Junction Agency",
+    "owner_name": "Mary Mwakio",
+    "tier": "Tier-1",
+    "location": {"town": "Voi", "county": "Taita-Taveta"},
+    "status": "active",
+    "float_balance_kes": 23000,
+    "float_minimum_kes": 50000,
+    "settlement_account": "0102345678916",
+    "onboarded_date": "2025-02-28",
+    "last_updated": "2026-05-25T07:15:00Z",
+    "scorecard": {
+      "period": "2026-04",
+      "kyc_completeness_pct": 86.4,
+      "transaction_reversal_rate_pct": 2.5,
+      "customer_complaints": 1,
+      "float_discipline_score": 2.6
+    }
+  },
+  {
+    "agent_id": "AG-018",
+    "business_name": "Bungoma Central Pay",
+    "owner_name": "Wycliffe Wafula",
+    "tier": "Tier-2",
+    "location": {"town": "Bungoma", "county": "Bungoma"},
+    "status": "active",
+    "float_balance_kes": 260000,
+    "float_minimum_kes": 200000,
+    "settlement_account": "0102345678917",
+    "onboarded_date": "2024-04-09",
+    "last_updated": "2026-05-25T08:00:00Z",
+    "scorecard": {
+      "period": "2026-04",
+      "kyc_completeness_pct": 93.0,
+      "transaction_reversal_rate_pct": 0.9,
+      "customer_complaints": 1,
+      "float_discipline_score": 4.0
+    }
+  },
+  {
+    "agent_id": "AG-019",
+    "business_name": "Naivasha Lakeside Cash",
+    "owner_name": "Caroline Wambui",
+    "tier": "Tier-3",
+    "location": {"town": "Naivasha", "county": "Nakuru"},
+    "status": "active",
+    "float_balance_kes": 1410000,
+    "float_minimum_kes": 500000,
+    "settlement_account": "0102345678918",
+    "onboarded_date": "2023-06-12",
+    "last_updated": "2026-05-25T08:08:00Z",
+    "scorecard": {
+      "period": "2026-04",
+      "kyc_completeness_pct": 97.5,
+      "transaction_reversal_rate_pct": 0.4,
+      "customer_complaints": 0,
+      "float_discipline_score": 4.7
+    }
+  },
+  {
+    "agent_id": "AG-020",
+    "business_name": "Kericho Tea Pay",
+    "owner_name": "Kipchirchir Koech",
+    "tier": "Tier-2",
+    "location": {"town": "Kericho", "county": "Kericho"},
+    "status": "active",
+    "float_balance_kes": 198000,
+    "float_minimum_kes": 200000,
+    "settlement_account": "0102345678919",
+    "onboarded_date": "2024-07-22",
+    "last_updated": "2026-05-25T07:55:00Z",
+    "scorecard": {
+      "period": "2026-04",
+      "kyc_completeness_pct": 94.8,
+      "transaction_reversal_rate_pct": 0.6,
+      "customer_complaints": 0,
+      "float_discipline_score": 4.2
+    }
+  }
+]
