@@ -12,7 +12,6 @@ from langchain_text_splitters import (
 )
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
-from langchain_huggingface import HuggingFaceEmbeddings
 from transformers import AutoTokenizer
 
 from rag.config import (
@@ -23,6 +22,7 @@ from rag.config import (
     CORPUS_DIR,
     EMBEDDING_MODEL,
 )
+from rag.embeddings import get_embedder
 
 
 HEADERS_TO_SPLIT_ON = [
@@ -118,10 +118,7 @@ def build_index(
 
     persist_dir.mkdir(parents=True, exist_ok=True)
 
-    embeddings = HuggingFaceEmbeddings(
-        model_name=EMBEDDING_MODEL,
-        encode_kwargs={"normalize_embeddings": True},
-    )
+    embeddings = get_embedder()
 
     vectorstore = Chroma.from_documents(
         documents=list(chunks),
@@ -135,10 +132,7 @@ def build_index(
 
 def load_vectorstore(persist_dir: Path = CHROMA_DIR) -> Chroma:
     """Open an existing Chroma collection for retrieval."""
-    embeddings = HuggingFaceEmbeddings(
-        model_name=EMBEDDING_MODEL,
-        encode_kwargs={"normalize_embeddings": True},
-    )
+    embeddings = get_embedder()
     return Chroma(
         collection_name=COLLECTION_NAME,
         persist_directory=str(persist_dir),

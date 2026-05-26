@@ -89,7 +89,9 @@ downloads on the critical path.
 
 A user question travels through five stages:
 
-1. **Embed** the question into a 384-dimensional vector using `bge-small`.
+1. **Embed** the question into a vector using either a local model
+   (`bge-small`, 384-dim) or a hosted API (Cohere `embed-english-v3.0`,
+   1024-dim). The backend is chosen via `EMBEDDING_BACKEND`.
 2. **Retrieve** the top 5 most-similar chunks from Chroma by cosine distance,
    along with their full metadata (document title, section path, doc ID).
 3. **Guard** — if the best chunk is too dissimilar (distance > 1.2), short-
@@ -114,6 +116,13 @@ The whole pipeline is in `rag/` with one file per concern (`retrieval.py`,
 - Python 3.11+
 - A Groq API key — sign up at [console.groq.com](https://console.groq.com)
   (free tier is plenty)
+
+> **Cohere API key is OPTIONAL.** The project defaults to a local embedding
+> model (`bge-small`) that runs in-process with no external API calls. You
+> only need a Cohere key if you set `EMBEDDING_BACKEND=cohere`, which is what
+> the live deployment uses for faster production embedding. For local
+> evaluation, exploration, and testing the default `EMBEDDING_BACKEND=local`
+> works without any Cohere key.
 
 ### Local development
 
@@ -205,6 +214,40 @@ aggregate summary.
 ```bash
 PYTHONPATH=. python scripts/benchmark_latency.py
 ```
+
+---
+
+## Embedding backend
+
+The system supports two embedding backends, selected by the
+`EMBEDDING_BACKEND` environment variable:
+
+| Value | Model | Vector dim | Cost | Use case |
+|---|---|---|---|---|
+| `local` (default) | `BAAI/bge-small-en-v1.5` | 384 | Free, no key | Local dev, offline work, grader exploration |
+| `cohere` | `embed-english-v3.0` | 1024 | Cohere free tier | Production deployment for speed |
+
+**For evaluation / exploration: do nothing.** Default is `local` and works
+with just the Groq API key.
+
+**To try the Cohere backend locally** (optional):
+
+1. Sign up for a free Cohere account at [dashboard.cohere.com](https://dashboard.cohere.com/)
+2. Add to `.env`:
+   ```
+   COHERE_API_KEY=<your trial key>
+   EMBEDDING_BACKEND=cohere
+   ```
+3. Rebuild the Chroma index for the new vector dimensions:
+   ```bash
+   PYTHONPATH=. python scripts/ingest.py --clear
+   ```
+
+**Important:** the Chroma index stores vectors at a fixed dimension. The two
+backends produce different dimensions (384 vs 1024), so switching between
+them requires a full rebuild. The retriever raises an
+`EmbeddingDimensionMismatch` error with the exact fix command if it ever
+detects a mismatch at runtime.
 
 ---
 

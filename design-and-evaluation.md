@@ -38,9 +38,34 @@ Final corpus: 206 chunks across 12 policies, with 80-token overlap so cross- chu
 
 ### Embeddings
 
-`BAAI/bge-small-en-v1.5` — 384-dimensional, runs locally, no API key, ~85% of the quality of the larger BGE models at a tenth of the compute. Vectors are normalized so similarity is a plain dot product, which is what Chroma uses by default.
+The system supports two embedding backends, chosen by the `EMBEDDING_BACKEND`
+environment variable:
 
-I considered hosted embedding APIs (Cohere, Voyage) but the local model was good enough that the simplicity won out. Production trade-off: local embedding adds 200-400ms of CPU work per query on a decent machine, and noticeably more on Render's fractional vCPU (more on that below).
+- **`local` (default)**: `BAAI/bge-small-en-v1.5` — 384-dim, runs in-process,
+  no external API key. Used by anyone cloning the repo to evaluate or
+  explore the project. Self-contained and free.
+- **`cohere`**: `embed-english-v3.0` — 1024-dim, called over HTTPS against
+  Cohere's free tier. Used by the live deployment. Cuts production
+  embedding from ~10 seconds on Render's 0.1 vCPU down to ~50-150ms.
+
+Both implementations honour LangChain's `Embeddings` interface, so callers
+in `rag/ingestion.py` and `rag/retrieval.py` are backend-agnostic. The
+factory lives in `rag/embeddings.py`.
+
+The two backends produce different vector dimensions, which is a hard
+constraint: a Chroma collection stores vectors of a single dimension. The
+retriever detects mismatched-dimension errors and raises a clear
+`EmbeddingDimensionMismatch` with the exact remediation command
+(`PYTHONPATH=. python scripts/ingest.py --clear`).
+
+I started with local-only and added Cohere as a hosted backend after observing
+production retrieval latency of ~10 seconds on Render's free tier. The
+fundamental problem is that CPU embedding is the wrong tool for serving
+queries fast on cheap infrastructure; offloading the work to a service
+designed for it (running on dedicated hardware) is the right architectural
+answer. Keeping `local` as the default means the project still runs without
+any extra keys, which matters for graders, contributors, and anyone wanting
+to inspect it offline.
 
 ### Vector store
 
