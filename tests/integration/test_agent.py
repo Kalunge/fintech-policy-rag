@@ -13,12 +13,14 @@ def client():
         yield c
 
 
+@pytest.mark.live
 def test_agent_endpoint_exists(client: TestClient) -> None:
     resp = client.post("/chat/agent", json={"question": "test"})
     # 200 (works) or 503 (warming) — never 404
     assert resp.status_code in (200, 503)
 
 
+@pytest.mark.live
 def test_agent_pure_tool_call(client: TestClient) -> None:
     resp = client.post(
         "/chat/agent",
@@ -34,6 +36,7 @@ def test_agent_pure_tool_call(client: TestClient) -> None:
     assert "tool_calls" in data
 
 
+@pytest.mark.live
 def test_agent_handles_unknown_id(client: TestClient) -> None:
     resp = client.post(
         "/chat/agent",
@@ -55,6 +58,7 @@ def test_agent_handles_unknown_id(client: TestClient) -> None:
     assert acceptable, f"unexpected answer: {data['answer']!r}"
 
 
+@pytest.mark.live
 def test_agent_response_shape(client: TestClient) -> None:
     resp = client.post(
         "/chat/agent",
