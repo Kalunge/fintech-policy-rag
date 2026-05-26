@@ -23,6 +23,7 @@ chromadb/
 .cache/
 .hf_cache/
 .streamlit/
+.llm_cache.db
 
 # IDE
 .vscode/
