@@ -52,10 +52,18 @@ COPY deploy/ ./deploy/
 # Ensure start.sh is executable inside the image (same registry stripping risk).
 RUN chmod +x /app/deploy/start.sh
 
+# Forward embedding-backend selection from the build platform (Render auto-passes
+# matching service env vars as build args when the ARGs are declared here).
+# Scoped to the ingest RUN below so the API key never ends up in a shipped layer.
+ARG EMBEDDING_BACKEND=local
+ARG COHERE_API_KEY=
+
 # Build the Chroma vector store at image-build time so the container starts fast.
-# Downloads the embedding model into HF_HOME as a side effect; both end up in
-# the image layer cache.
-RUN python scripts/ingest.py --clear
+# Downloads the embedding model into HF_HOME as a side effect when local; for
+# Cohere it makes ~5 HTTPS calls. Both end up in the image layer cache.
+RUN EMBEDDING_BACKEND=${EMBEDDING_BACKEND} \
+    COHERE_API_KEY=${COHERE_API_KEY} \
+    python scripts/ingest.py --clear
 
 # Default port if Render hasn't set $PORT
 ENV PORT=8080
