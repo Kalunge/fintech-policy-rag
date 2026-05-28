@@ -1,11 +1,13 @@
 """FastAPI app exposing the RAG pipeline as a REST service."""
 from __future__ import annotations
 
+import json
 import logging
 from contextlib import asynccontextmanager
+from typing import Iterator
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, StreamingResponse
 
 from api.schemas import AgentChatResponse, ChatRequest, ChatResponse, HealthResponse
 from rag.agent import AgenticPipeline
@@ -90,7 +92,12 @@ async def health(request: Request) -> HealthResponse:
 
 
 @app.post("/chat", response_model=ChatResponse)
-async def chat(request: Request, payload: ChatRequest) -> ChatResponse:
+def chat(request: Request, payload: ChatRequest) -> ChatResponse:
+    # Sync route: pipeline.answer() makes blocking HTTPS calls to Cohere and
+    # Groq. Declaring this `async def` would freeze the FastAPI event loop for
+    # the duration of every request, including /health probes — Render then
+    # kills the instance after a 5s health timeout. Sync routes run in a
+    # thread pool, leaving the loop free.
     if not getattr(request.app.state, "ready", False):
         raise HTTPException(status_code=503, detail="Service warming up, please retry shortly.")
 
@@ -106,8 +113,47 @@ async def chat(request: Request, payload: ChatRequest) -> ChatResponse:
     return ChatResponse(**{k: v for k, v in result.items() if k in ChatResponse.model_fields})
 
 
+# Fields the public stream endpoint exposes in its done event. Keeps the
+# contract aligned with ChatResponse — full_chunks and retrieval_debug stay
+# internal.
+_PUBLIC_DONE_FIELDS = frozenset(ChatResponse.model_fields) | {"done"}
+
+
+def _sse(event: dict) -> str:
+    return f"data: {json.dumps(event)}\n\n"
+
+
+@app.post("/chat/stream")
+def chat_stream(request: Request, payload: ChatRequest) -> StreamingResponse:
+    """Server-Sent Events stream of the answer.
+
+    Emits `data: {"token": "..."}\\n\\n` per LLM chunk, then a single
+    `data: {"done": true, ...}\\n\\n` event carrying answer, citations,
+    snippets, latency, and out_of_corpus — the same public shape as /chat.
+    """
+    if not getattr(request.app.state, "ready", False):
+        raise HTTPException(status_code=503, detail="Service warming up, please retry shortly.")
+
+    pipeline: RAGPipeline = request.app.state.pipeline
+
+    def event_stream() -> Iterator[str]:
+        try:
+            for event in pipeline.stream_answer(payload.question):
+                if event.get("done"):
+                    public = {k: v for k, v in event.items() if k in _PUBLIC_DONE_FIELDS}
+                    yield _sse(public)
+                else:
+                    yield _sse(event)
+        except Exception as exc:
+            log.exception("Streaming pipeline failure for question: %r", payload.question)
+            yield _sse({"error": "Internal error generating the answer.", "code": "INTERNAL"})
+            raise
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
+
+
 @app.post("/chat/agent", response_model=AgentChatResponse)
-async def chat_agent(request: Request, payload: ChatRequest) -> AgentChatResponse:
+def chat_agent(request: Request, payload: ChatRequest) -> AgentChatResponse:
     """Agentic version of /chat — same interface but the LLM can also call
     banking tools (agent balance, transaction lookup, terminal status,
     compliance scorecard, mock deposit) in addition to searching policies.

@@ -55,7 +55,11 @@ RUN chmod +x /app/deploy/start.sh
 # Forward embedding-backend selection from the build platform (Render auto-passes
 # matching service env vars as build args when the ARGs are declared here).
 # Scoped to the ingest RUN below so the API key never ends up in a shipped layer.
-ARG EMBEDDING_BACKEND=local
+# Default is cohere because the image deliberately omits torch / sentence-
+# transformers to fit under the 512 MB Render free-tier memory budget — the
+# local backend isn't installable here. Pass --build-arg COHERE_API_KEY=... to
+# successfully build the index.
+ARG EMBEDDING_BACKEND=cohere
 ARG COHERE_API_KEY=
 
 # Build the Chroma vector store at image-build time so the container starts fast.

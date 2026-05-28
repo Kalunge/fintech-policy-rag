@@ -10,7 +10,9 @@ Requires the API server to be running at API_BASE_URL (default localhost:8000).
 """
 from __future__ import annotations
 
+import json
 import os
+from typing import Iterator
 
 import httpx
 import streamlit as st
@@ -117,29 +119,25 @@ st.caption(
 
 # ── Render existing chat history ────────────────────────────────────────
 
-def _render_assistant_message(msg: dict) -> None:
-    """Render an assistant turn with its tool calls, citations, and latency."""
-    meta = msg.get("meta") or {}
-    out_of_corpus = meta.get("out_of_corpus", False)
-
-    # Render tool calls (agent mode only) above the answer
+def _render_tool_calls(meta: dict) -> None:
     tool_calls = meta.get("tool_calls") or []
-    if tool_calls:
-        with st.expander(f"Tool calls ({len(tool_calls)})", expanded=False):
-            for tc in tool_calls:
-                args_str = ", ".join(f"{k}={v!r}" for k, v in (tc.get("args") or {}).items())
-                st.markdown(f"**`{tc['tool']}({args_str})`** — {tc.get('summary', '')}")
-                result = tc.get("result")
-                if isinstance(result, dict) and result.get("error"):
-                    st.markdown(f"_Error:_ `{result.get('code')}` — {result.get('message')}")
-                elif isinstance(result, dict):
-                    st.json(result, expanded=False)
+    if not tool_calls:
+        return
+    with st.expander(f"Tool calls ({len(tool_calls)})", expanded=False):
+        for tc in tool_calls:
+            args_str = ", ".join(f"{k}={v!r}" for k, v in (tc.get("args") or {}).items())
+            st.markdown(f"**`{tc['tool']}({args_str})`** — {tc.get('summary', '')}")
+            result = tc.get("result")
+            if isinstance(result, dict) and result.get("error"):
+                st.markdown(f"_Error:_ `{result.get('code')}` — {result.get('message')}")
+            elif isinstance(result, dict):
+                st.json(result, expanded=False)
 
-    if out_of_corpus:
-        st.warning(msg["content"], icon="🚫")
-    else:
-        st.markdown(msg["content"])
 
+def _render_trailing_metadata(meta: dict) -> None:
+    """Sources expander + latency caption. Reused by history rendering and by
+    the streaming path (after `st.write_stream` finishes drawing the answer).
+    """
     citations = meta.get("citations") or []
     snippets = {s["source_idx"]: s["snippet"] for s in (meta.get("snippets") or [])}
 
@@ -164,6 +162,19 @@ def _render_assistant_message(msg: dict) -> None:
             f"retrieve {retrieve:.0f}ms · generate {generate:.0f}ms · "
             f"total {total:.0f}ms"
         )
+
+
+def _render_assistant_message(msg: dict) -> None:
+    """Render a historical assistant turn (tool calls, body, citations, latency)."""
+    meta = msg.get("meta") or {}
+    _render_tool_calls(meta)
+
+    if meta.get("out_of_corpus"):
+        st.warning(msg["content"], icon="🚫")
+    else:
+        st.markdown(msg["content"])
+
+    _render_trailing_metadata(meta)
 
 
 for msg in st.session_state.messages:
@@ -210,6 +221,52 @@ def call_api(question: str, agent_mode: bool = False) -> tuple[dict | None, str 
         return None, "Received an invalid response from the API."
 
 
+def stream_api(question: str, meta: dict) -> Iterator[str]:
+    """Consume /chat/stream and yield each token for `st.write_stream`.
+
+    Side effect: populates `meta` with the done-event payload (and `error`
+    if anything goes wrong). The caller reads `meta` after the stream
+    finishes to render citations and latency.
+    """
+    try:
+        with httpx.stream(
+            "POST",
+            f"{API_BASE_URL}/chat/stream",
+            json={"question": question},
+            timeout=httpx.Timeout(REQUEST_TIMEOUT_SECONDS),
+        ) as resp:
+            if resp.status_code == 503:
+                meta["error"] = "The service is still warming up. Please retry in a moment."
+                return
+            if resp.status_code == 422:
+                meta["error"] = "Your question must be between 1 and 1000 characters."
+                return
+            if resp.status_code != 200:
+                meta["error"] = f"Unexpected response from API: HTTP {resp.status_code}."
+                return
+
+            for line in resp.iter_lines():
+                if not line.startswith("data: "):
+                    continue
+                payload = json.loads(line[len("data: "):])
+                if payload.get("done"):
+                    meta.update(payload)
+                elif "error" in payload:
+                    meta["error"] = payload["error"]
+                    return
+                elif "token" in payload:
+                    yield payload["token"]
+    except httpx.ConnectError:
+        meta["error"] = (
+            "Cannot reach the API server. Make sure FastAPI is running at "
+            f"`{API_BASE_URL}`."
+        )
+    except httpx.ReadTimeout:
+        meta["error"] = "The request timed out. Try a shorter question or retry."
+    except Exception as exc:
+        meta["error"] = f"Unexpected error during streaming: {exc}"
+
+
 # ── Input handling ──────────────────────────────────────────────────────
 
 # Either the user typed something or they clicked a sample question
@@ -228,19 +285,39 @@ if question:
         st.markdown(question)
 
     with st.chat_message("assistant"):
-        spinner_text = "Thinking..." if not st.session_state.agent_mode else "Looking up data and policies..."
-        with st.spinner(spinner_text):
-            payload, error = call_api(question, agent_mode=st.session_state.agent_mode)
+        if st.session_state.agent_mode:
+            # Agent flow stays synchronous — tool-calling loops don't map cleanly
+            # to token streaming (see docs/14-streaming-deep-dive.md).
+            with st.spinner("Looking up data and policies..."):
+                payload, error = call_api(question, agent_mode=True)
 
-        if error:
-            st.error(error)
-            # Roll back the user message so they can retry cleanly
-            st.session_state.messages.pop()
+            if error:
+                st.error(error)
+                st.session_state.messages.pop()
+            else:
+                assistant_msg = {
+                    "role": "assistant",
+                    "content": payload["answer"],
+                    "meta": payload,
+                }
+                st.session_state.messages.append(assistant_msg)
+                _render_assistant_message(assistant_msg)
         else:
-            assistant_msg = {
-                "role": "assistant",
-                "content": payload["answer"],
-                "meta": payload,
-            }
-            st.session_state.messages.append(assistant_msg)
-            _render_assistant_message(assistant_msg)
+            # RAG flow streams tokens via /chat/stream. write_stream renders
+            # them with a typewriter effect; metadata arrives in the done event
+            # and is rendered below as the Sources expander + latency caption.
+            meta: dict = {}
+            streamed_text = st.write_stream(stream_api(question, meta))
+
+            if "error" in meta:
+                st.error(meta["error"])
+                st.session_state.messages.pop()
+            else:
+                _render_trailing_metadata(meta)
+                st.session_state.messages.append(
+                    {
+                        "role": "assistant",
+                        "content": meta.get("answer") or streamed_text,
+                        "meta": meta,
+                    }
+                )
