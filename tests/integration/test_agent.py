@@ -5,6 +5,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from api.main import app
+from tests.conftest import skip_if_rate_limited
 
 
 @pytest.fixture(scope="module")
@@ -16,7 +17,7 @@ def client():
 @pytest.mark.live
 def test_agent_endpoint_exists(client: TestClient) -> None:
     resp = client.post("/chat/agent", json={"question": "test"})
-    # 200 (works) or 503 (warming) — never 404
+    # 200 (works) or 503 (warming or rate-limited) — never 404
     assert resp.status_code in (200, 503)
 
 
@@ -26,6 +27,7 @@ def test_agent_pure_tool_call(client: TestClient) -> None:
         "/chat/agent",
         json={"question": "What is the float balance for agent AG-001?"},
     )
+    skip_if_rate_limited(resp)
     assert resp.status_code == 200
     data = resp.json()
     # The answer should be non-empty and the response shape valid.
@@ -42,6 +44,7 @@ def test_agent_handles_unknown_id(client: TestClient) -> None:
         "/chat/agent",
         json={"question": "What is the balance for agent AG-999?"},
     )
+    skip_if_rate_limited(resp)
     assert resp.status_code == 200
     data = resp.json()
     answer_lower = data["answer"].lower()
@@ -64,6 +67,7 @@ def test_agent_response_shape(client: TestClient) -> None:
         "/chat/agent",
         json={"question": "What is the status of terminal TID-001?"},
     )
+    skip_if_rate_limited(resp)
     assert resp.status_code == 200
     data = resp.json()
     # ChatResponse fields

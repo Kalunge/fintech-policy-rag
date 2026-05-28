@@ -8,11 +8,17 @@ from typing import Iterator
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, StreamingResponse
+from groq import RateLimitError as GroqRateLimitError
 
 from api.schemas import AgentChatResponse, ChatRequest, ChatResponse, HealthResponse
 from rag.agent import AgenticPipeline
 from rag.config import LLM_MODEL
 from rag.pipeline import RAGPipeline
+
+
+# Detail string used when Groq returns 429. Tests recognise this prefix and
+# skip rather than fail when the upstream LLM is throttling us.
+_RATE_LIMIT_DETAIL_PREFIX = "Upstream LLM rate-limited"
 
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -104,6 +110,9 @@ def chat(request: Request, payload: ChatRequest) -> ChatResponse:
     pipeline: RAGPipeline = request.app.state.pipeline
     try:
         result = pipeline.answer(payload.question)
+    except GroqRateLimitError as exc:
+        log.warning("Groq rate-limited /chat: %s", exc)
+        raise HTTPException(status_code=503, detail=f"{_RATE_LIMIT_DETAIL_PREFIX}: {exc}") from exc
     except Exception as exc:
         log.exception("Pipeline failure for question: %r", payload.question)
         raise HTTPException(status_code=500, detail="Internal error generating the answer.") from exc
@@ -144,6 +153,9 @@ def chat_stream(request: Request, payload: ChatRequest) -> StreamingResponse:
                     yield _sse(public)
                 else:
                     yield _sse(event)
+        except GroqRateLimitError as exc:
+            log.warning("Groq rate-limited /chat/stream: %s", exc)
+            yield _sse({"error": str(exc), "code": "RATE_LIMIT"})
         except Exception as exc:
             log.exception("Streaming pipeline failure for question: %r", payload.question)
             yield _sse({"error": "Internal error generating the answer.", "code": "INTERNAL"})
@@ -167,6 +179,9 @@ def chat_agent(request: Request, payload: ChatRequest) -> AgentChatResponse:
     agent_pipeline: AgenticPipeline = request.app.state.agent_pipeline
     try:
         result = agent_pipeline.answer(payload.question)
+    except GroqRateLimitError as exc:
+        log.warning("Groq rate-limited /chat/agent: %s", exc)
+        raise HTTPException(status_code=503, detail=f"{_RATE_LIMIT_DETAIL_PREFIX}: {exc}") from exc
     except Exception as exc:
         log.exception("Agentic pipeline failure for question: %r", payload.question)
         raise HTTPException(status_code=500, detail="Internal error generating the answer.") from exc
