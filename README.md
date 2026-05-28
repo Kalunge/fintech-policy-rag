@@ -381,6 +381,8 @@ fintech-policy-rag/
 | `GET` | `/` | HTML landing (when accessed via Caddy, routed to Streamlit UI) |
 | `GET` | `/health` | Liveness + readiness JSON |
 | `POST` | `/chat` | Main RAG endpoint — accepts `{question}`, returns `{answer, citations, snippets, latency, ...}` |
+| `POST` | `/chat/stream` | Server-Sent Events stream — same answer as `/chat`, but token-by-token. See [streaming walkthrough](docs/14-streaming-deep-dive.md). |
+| `POST` | `/chat/agent` | Agentic RAG — same response shape plus a `tool_calls` list. See the agentic [walkthrough](docs/12-agentic-tools-deep-dive.md). |
 | `GET` | `/docs` | Auto-generated Swagger UI |
 | `GET` | `/openapi.json` | OpenAPI 3 spec |
 
