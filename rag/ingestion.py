@@ -12,7 +12,6 @@ from langchain_text_splitters import (
 )
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
-from transformers import AutoTokenizer
 
 from rag.config import (
     CHROMA_DIR,
@@ -23,6 +22,34 @@ from rag.config import (
     EMBEDDING_MODEL,
 )
 from rag.embeddings import get_embedder
+
+
+def _build_token_length():
+    """Return a callable that estimates token count for a string.
+
+    Uses the precise HuggingFace tokenizer when `transformers` is installed
+    (i.e. when requirements-local.txt is in the env). Otherwise falls back
+    to the standard ~4-chars-per-token heuristic, which is accurate enough
+    for chunk-size enforcement and lets production skip the ~50 MB
+    transformers + tokenizer download.
+    """
+    try:
+        from transformers import AutoTokenizer
+
+        tokenizer = AutoTokenizer.from_pretrained(EMBEDDING_MODEL)
+
+        def precise(text: str) -> int:
+            return len(tokenizer.encode(text, add_special_tokens=False))
+
+        return precise
+    except ImportError:
+        def approximate(text: str) -> int:
+            # 4 chars/token is the widely-quoted English-text approximation
+            # for sub-word tokenizers like BPE and WordPiece. Good enough
+            # to keep chunks within CHUNK_SIZE during splitting.
+            return max(1, len(text) // 4)
+
+        return approximate
 
 
 HEADERS_TO_SPLIT_ON = [
@@ -64,10 +91,7 @@ def load_and_chunk(corpus_dir: Path = CORPUS_DIR) -> list[Document]:
         strip_headers=False,
     )
 
-    tokenizer = AutoTokenizer.from_pretrained(EMBEDDING_MODEL)
-
-    def token_length(text: str) -> int:
-        return len(tokenizer.encode(text, add_special_tokens=False))
+    token_length = _build_token_length()
 
     fine_splitter = RecursiveCharacterTextSplitter(
         chunk_size=CHUNK_SIZE,
