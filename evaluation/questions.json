@@ -207,5 +207,42 @@
     "id": "ooc-004",
     "question": "How do I fix a leaking kitchen tap?",
     "in_corpus": false
+  },
+  {
+    "id": "adv-ooc-001",
+    "question": "What is the company's parental leave policy?",
+    "in_corpus": false
+  },
+  {
+    "id": "adv-ooc-002",
+    "question": "What is the company's policy on personal cryptocurrency trading by employees?",
+    "in_corpus": false
+  },
+  {
+    "id": "adv-ambig-001",
+    "question": "What approval do I need to spend money?",
+    "expected_doc_id": "TBP-POL-EP-001",
+    "expected_section_contains": "Approval Authority Matrix",
+    "must_contain": ["approval"],
+    "gold_answer": "Spending approval depends on the amount. The Approval Authority Matrix specifies the required approver per tier — for example Line Manager up to 50,000 KES, Department Head 50,001-250,000 KES, and Functional Director 250,001-1,000,000 KES.",
+    "in_corpus": true
+  },
+  {
+    "id": "adv-multi-001",
+    "question": "What should I do if my work laptop is lost?",
+    "expected_doc_id": "TBP-POL-AU-001",
+    "expected_section_contains": "Reporting",
+    "must_contain": ["1 hour"],
+    "gold_answer": "Lost or stolen devices must be reported within 1 hour of discovery, per the Acceptable Use Policy.",
+    "in_corpus": true
+  },
+  {
+    "id": "adv-multi-002",
+    "question": "A customer says their card was stolen — what's the protocol?",
+    "expected_doc_id": "TBP-POL-CI-001",
+    "expected_section_contains": "Loss, Theft",
+    "must_contain": ["Card Hotline"],
+    "gold_answer": "Customers must report loss or theft immediately via the 24/7 Card Hotline, which blocks the card to prevent further transactions. A replacement card can then be issued per the Card Issuance & Management Policy.",
+    "in_corpus": true
   }
 ]

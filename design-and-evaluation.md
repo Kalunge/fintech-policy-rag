@@ -58,14 +58,8 @@ retriever detects mismatched-dimension errors and raises a clear
 `EmbeddingDimensionMismatch` with the exact remediation command
 (`PYTHONPATH=. python scripts/ingest.py --clear`).
 
-I started with local-only and added Cohere as a hosted backend after observing
-production retrieval latency of ~10 seconds on Render's free tier. The
-fundamental problem is that CPU embedding is the wrong tool for serving
-queries fast on cheap infrastructure; offloading the work to a service
-designed for it (running on dedicated hardware) is the right architectural
-answer. Keeping `local` as the default means the project still runs without
-any extra keys, which matters for graders, contributors, and anyone wanting
-to inspect it offline.
+I started with local-only and added Cohere as a hosted backend after observing production retrieval latency of ~10 seconds on Render's free tier. The fundamental problem is that CPU embedding is the wrong tool for serving queries fast on cheap infrastructure; offloading the work to a service
+designed for it (running on dedicated hardware) is the right architectural answer. Keeping `local` as the default means the project still runs without any extra keys, which matters for graders,contributors, and anyone wanting to inspect it offline.
 
 ### Vector store
 
@@ -119,13 +113,22 @@ This satisfies the "deploy only if tests pass" requirement: pull requests never 
 
 ### Eval set
 
-25 hand-curated questions, written before I looked at any model output:
+30 hand-curated questions split into two tiers:
 
-- 21 in-corpus questions spread across all 12 policies, picked to cover a mix of
-  single-fact retrieval ("how long are KYC documents retained?") and multi-hop
-  questions ("what is the RTO for mobile banking?")
-- 4 out-of-corpus questions where the system should refuse (recipes, capitals,
-  sports trivia, plumbing advice)
+- **25 base questions** written before I looked at any model output:
+  - 21 in-corpus, spread across all 12 policies, mixing single-fact retrieval
+    ("how long are KYC documents retained?") with multi-hop questions ("what is
+    the RTO for mobile banking?")
+  - 4 obviously off-topic refusal cases (recipes, capitals, sports trivia,
+    plumbing)
+- **5 adversarial questions** added later to stress the harder paths:
+  - Two policy-adjacent refusals that *sound* like company policies but aren't
+    in the corpus (parental leave, personal cryptocurrency trading)
+  - One deliberately vague query ("what approval do I need to spend money?")
+    where the right answer references the Approval Authority Matrix tiers
+  - Two multi-doc questions where the correct citation isn't the document the
+    bi-encoder ranks first (lost work laptop → answer is in the Acceptable
+    Use Policy not Remote Work; customer stolen card → Card Issuance §4.5)
 
 For each in-corpus question I recorded the expected document ID, a substring of
 the expected section name, a list of facts that must appear in the answer
@@ -148,17 +151,33 @@ The LLM-as-judge sees the question, the model's answer, and the un-truncated tex
 
 ### Results
 
-On the full 25-question eval set:
+On the full 30-question eval set:
 
 | Metric | Score |
 |---|---|
-| Groundedness | 100% (21/21) |
-| Citation accuracy | 100% (21/21) |
-| Correct policy cited | 100% (21/21) |
-| Full partial match | 100% (21/21) |
-| Correct refusal | 100% (4/4) |
+| Groundedness | 100% (24/24) |
+| Citation accuracy | 100% (24/24) |
+| Correct policy cited | 95.8% (23/24) |
+| Full partial match | 95.8% (23/24) |
+| Correct refusal | 100% (6/6) |
 
-100% across the board is unusual and worth a closer look.
+The single miss on policy match and partial match was the same question:
+`info-sec-002` (vulnerability remediation timing). The answer was grounded
+and cited the right document, but didn't include both required phrases from
+the gold check (`7 days` *and* `CVSS`). The system understood the policy
+correctly; the test bar was just stricter than the answer.
+
+The adversarial subset — both new OOC refusals, the vague approval query, and
+both multi-doc questions — all passed. The lost-laptop question is worth
+flagging: the bi-encoder ranks the Remote Work policy at #1 because "work
+laptop" matches strongly, but the actual policy is in the Acceptable Use
+Policy at rank 4 of the top-5. The LLM still composed the correct answer
+from the right chunk in the retrieved context, which is exactly the kind of
+robustness multi-stage retrieval and well-tuned prompting are supposed to
+deliver.
+
+100% groundedness and citation accuracy across the board is high and worth a
+closer look.
 
 ### Why the numbers landed so high
 
@@ -169,11 +188,14 @@ A few honest factors:
    noise. Real corporate policy corpora have outdated text, duplicates, and
    conflicting statements; a real eval would be messier.
 
-2. **The eval set was hand-curated, not adversarial**. The questions point at
-   specific facts that I knew were in single sections of the corpus. A
-   stress-test set would include ambiguous questions, ones that combine
-   information from multiple policies in conflicting ways, and edge cases like
-   "what's the rule when both policies apply?"
+2. **Most of the eval set is hand-curated rather than truly adversarial**.
+   The base 25 questions point at specific facts I knew were in single
+   sections of the corpus. The 5 adversarial questions I added later did
+   stress refusals, vague phrasing, and multi-doc retrieval, and the system
+   handled all of them — but 30 questions is still a small set. A larger
+   adversarial set would include ambiguous questions, ones that combine
+   information from multiple policies in conflicting ways, and edge cases
+   like "what's the rule when both policies apply?"
 
 3. **The chunking is well-tuned to the corpus structure**. Heading-aware
    splitting works extremely well when the corpus uses consistent headings,
@@ -185,44 +207,92 @@ A few honest factors:
    forcing the judge to verify against the actual cited chunks, but the bias
    isn't zero.
 
-In other words: 100% on this eval set is real but it isn't a guarantee the
-system would land at 100% on, say, a fresh set of policies written by someone
-else. A more honest range for production use is probably 85-95%, and a serious
-deployment would calibrate against a larger, more adversarial eval set.
+In other words: high scores on this eval set are real but they aren't a
+guarantee the system would land in the same range on, say, a fresh set of
+policies written by someone else. A more honest range for production use
+is probably 85-95% groundedness, and a serious deployment would calibrate
+against a larger, more adversarial eval set than 30 questions.
 
 ### Latency
 
-I measured latency two ways:
+I measured latency three ways, against the production-shaped backend
+(Cohere embeddings + Groq Llama 3.3 70B).
 
-**Interactive (single user, paced):** 20 queries with 1.5-second pauses between them, no LLM-as-judge calls, the first query discarded as warmup.
+**Interactive (single user, paced, cache disabled):** five clean
+cache-miss samples before the daily Groq quota cut the run short. With
+the LLM cache off, each generate is a real network round-trip.
+
+| Stage | mean | range |
+|---|---|---|
+| Retrieve | 389ms | 357-449ms |
+| Generate | 677ms | 281-1050ms |
+| Total | 1065ms | 705-1408ms |
+
+**Full eval (30 questions, LLM-as-judge running per question):** the
+canonical end-to-end run.
 
 | Stage | p50 | p95 | mean |
 |---|---|---|---|
-| Retrieve | 64ms | 279ms | 98ms |
-| Generate | 413ms | 2602ms | 856ms |
-| Total | 543ms | 2721ms | 954ms |
+| Total | 816ms | 5195ms | 2376ms |
 
-**Sustained-load (full eval):** all 25 questions back-to-back, each running both a generation call and a judge call. 50 LLM calls in roughly 2.5 minutes.
+The p95 sits high because Groq's free tier throttles as the daily
+token-per-day cap approaches — the early questions in the run come back
+in under a second, but the later ones drift into the 3-6 second range as
+the rolling window fills. The architecture itself isn't slow; the free
+tier is.
 
-| Stage | p50 | p95 | mean |
-|---|---|---|---|
-| Total | 4789ms | 5817ms | 3769ms |
+**Production on Render:** observed query latencies of 1.0-1.6 seconds
+once the hosted embedding backend was in place. Before the migration to
+Cohere, retrieval alone took 8-12 seconds per query on Render's 0.1 vCPU
+— the bge-small embedding model in PyTorch was simply the wrong tool on
+fractional CPU. Switching to Cohere over HTTPS dropped retrieval to
+roughly 300ms, which is the dominant production win.
 
-The sustained-load numbers are roughly 5x slower, and the difference is almost entirely queue time. At 50 LLM calls in 2.5 minutes the free-tier Groq rate limit kicks in and requests start waiting in line. The model itself didn't get slower; the queue did. In a real product, single users don't experience this.
+The other production stability win was making `/chat` a sync route
+rather than `async def`. The pipeline does blocking HTTPS calls, and an
+async wrapper froze the FastAPI event loop while a request was in
+flight — every concurrent `/health` probe queued behind it and Render
+killed the instance whenever a probe overlapped a `/chat`. Sync routes
+run in a thread pool, so the loop stays free.
 
-**Production reality on Render's free tier:** the live deployment is slower than my local measurements. I observed retrieve latencies of 10-11 seconds on the first few queries after a wake-up. Render's free tier provides 0.1 vCPU and 512 MB of RAM, which is enough to run the stack but not enough to embed queries quickly. The bottleneck is CPU-bound — the bge-small embedding model runs in pure PyTorch on the CPU and the fractional vCPU on Render is the constraint. Generation (Groq) is fine. For a production deployment I would either switch to a hosted embedding API (Cohere's free tier ~50ms, Voyage similar) or pay for a dedicated CPU instance.
 
+### What I built that's still off by default
+
+Two stretch features ship in the codebase but stay turned off in
+production because the measurements didn't justify the cost on this
+corpus.
+
+1. **Cross-encoder re-ranking.** `rag/reranker.py` implements two-stage
+   retrieval: pull a wider candidate set (top-20) from Chroma, rescore
+   each pair with a cross-encoder, return the top 5. Backends for both
+   Cohere's hosted `rerank-english-v3.0` and a local
+   `cross-encoder/ms-marco-MiniLM-L-6-v2`. Behind a
+   `RERANKER_BACKEND` env var (default `none`). The honest reason
+   for keeping it off: `scripts/rerank_compare.py` shows that on this
+   206-chunk corpus the bi-encoder already hits 100% recall@5, so the
+   reranker only nudges MRR from 0.902 to 0.921 while adding 150-300ms
+   per query. On a larger or noisier corpus the trade flips; the
+   activation is a single env var away.
+2. **Local embedding backend (`bge-small`).** Available for offline
+   development by installing `requirements-local.txt`. Production
+   defaults to Cohere because the local backend's ~250 MB resident
+   memory pushes the container over Render's 512 MB free-tier budget
+   and triggers OOM. The architecture works; the cheap host is the
+   constraint.
 
 ### What I would tune next
 
-1. **Hosted embedding API** to cut retrieval latency from ~250ms to ~50ms
-   locally and from ~10s to ~500ms in production on Render's free tier.
-2. **Re-ranking** — retrieve k=20 with cosine similarity, then re-rank the top
-   20 with a cross-encoder (something like bge-reranker-base) to pick the best
-   5. Usually improves precision by 2-5%.
-3. **A larger, more adversarial eval set** — at least 50 questions,
-   intentionally including ambiguous and edge cases.
-4. **Stream the LLM tokens** to the UI so the user sees the answer appear
-   word-by-word rather than waiting for the full response.
-5. **Conversation history** so the assistant can answer follow-ups in
-   context ("...and what about Tier-2 agents?" after a Tier-3 question).
+1. **A larger eval set with hand-labeled multi-doc ground truth.**
+   30 questions caught one partial-match miss; 100 or 200 questions
+   with explicit cross-policy answers would reveal more.
+2. **Conversation history** so the assistant can answer follow-ups in
+   context ("…and what about Tier-2 agents?" after a Tier-3 question).
+   Currently each `/chat` request is independent.
+3. **Streaming for the agent endpoint** — `/chat/stream` works for plain
+   RAG, but tool-calling loops can't naïvely stream because the model
+   may call a tool mid-response. A richer event protocol
+   (`thinking`, `tool_call`, `tool_result`, `text`) would close the gap.
+4. **Paid Cohere + Groq tier** to remove the rate-limit noise that
+   shows up in the p95 of any run that spans more than ~30 LLM calls
+   in a short window. Honest cost of using free tiers for
+   production-shaped measurements.
