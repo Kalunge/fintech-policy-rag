@@ -223,7 +223,7 @@ calls. Takes ~17 seconds. Needs `GROQ_API_KEY` set.
 # quick sanity check (5 questions, ~30 seconds)
 PYTHONPATH=. python scripts/evaluate.py --quick
 
-# full eval (25 questions, ~3 minutes)
+# full eval (30 questions, ~3 minutes)
 PYTHONPATH=. python scripts/evaluate.py
 ```
 
@@ -274,44 +274,59 @@ detects a mismatch at runtime.
 
 ## Evaluation results
 
-Twenty-five hand-curated questions, of which twenty-one are in-corpus across
-all twelve policies and four are deliberately off-topic.
+Thirty hand-curated questions: 24 in-corpus across all twelve policies and
+6 out-of-corpus refusal cases. Five of the 30 are an adversarial subset
+explicitly designed to stress the harder paths — two policy-adjacent
+refusals that *sound* like company policies but aren't in the corpus, one
+deliberately vague query, and two multi-doc questions where the correct
+citation isn't the document the bi-encoder ranks first.
 
 | Metric | Result |
 |---|---|
-| Groundedness (LLM-as-judge) | 100% (21/21) |
-| Citation accuracy (LLM-as-judge) | 100% (21/21) |
-| Correct policy cited (deterministic) | 100% (21/21) |
-| Full partial-match coverage | 100% (21/21) |
-| Correct refusal on out-of-corpus | 100% (4/4) |
+| Groundedness (LLM-as-judge) | 100% (24/24) |
+| Citation accuracy (LLM-as-judge) | 100% (24/24) |
+| Correct policy cited (deterministic) | 95.8% (23/24) |
+| Full partial-match coverage | 95.8% (23/24) |
+| Correct refusal on out-of-corpus | 100% (6/6) |
 
-A 100% sweep is unusually high. The headline reasons (also written up in
-detail in [design-and-evaluation.md](design-and-evaluation.md)):
+The single miss on policy match was a question about vulnerability
+remediation timing where the answer was grounded and cited the right
+document, but didn't include both phrases the gold check required. The
+adversarial subset (including the lost-laptop question, where the
+bi-encoder ranks Remote Work above the actual answer in the AUP) all
+passed.
+
+Why the numbers are this high, written up honestly in
+[design-and-evaluation.md](design-and-evaluation.md):
 
 - The corpus is self-authored, clean, and free of contradictions
-- The eval set is hand-curated and not adversarial
-- The LLM-as-judge is the same model family as the generator — known to be
-  lenient on its own outputs
+- 30 questions is still a small set — most are hand-curated single-fact
+  retrievals, not adversarial
+- The LLM-as-judge is the same model family as the generator — known to
+  be lenient on its own outputs
 
-A more honest production estimate is 85-95% on a tougher, adversarial eval
-set authored by someone other than me. The numbers above are real but
-they're a ceiling.
+A more honest production estimate is 85-95% groundedness on a tougher,
+larger adversarial eval set authored by someone other than me.
 
 ### Latency
 
-**Interactive (single user, paced 1.5s between requests):**
+**Production on Render with Cohere embeddings:** end-to-end queries land
+around 1.0-1.5 seconds. Before the migration from local bge-small to
+Cohere, retrieval alone took 8-12 seconds per query because the
+embedding model was CPU-bound on Render's 0.1 vCPU.
+
+**Full eval run (30 questions, LLM-as-judge running per question):**
 
 | Stage | p50 | p95 | mean |
 |---|---|---|---|
-| Retrieve | 64 ms | 279 ms | 98 ms |
-| Generate | 413 ms | 2602 ms | 856 ms |
-| **Total** | **543 ms** | **2721 ms** | **954 ms** |
+| Total | 816 ms | 5195 ms | 2376 ms |
 
-**Production on Render free tier (0.1 vCPU, 512 MB):** about 10-12 seconds
-for the first query after a wake-up, because query embedding is CPU-bound
-and the fractional vCPU is the bottleneck. Generation via Groq stays fast.
-The honest fix is a hosted embedding API (Cohere, Voyage) or a dedicated
-CPU instance.
+The p95 sits high because Groq's free tier throttles as the daily
+token cap approaches — the early questions in the run come back in
+under a second, the later ones drift into the 3-6 second range as the
+rolling window fills. The architecture itself isn't slow; the free
+tier is. Detailed breakdown including cache-miss samples is in
+[design-and-evaluation.md](design-and-evaluation.md).
 
 ---
 
@@ -433,31 +448,6 @@ GitHub Actions runs two jobs on every PR and push to main:
    triggers Render to rebuild and roll out the new image.
 
 Pull requests never reach the deploy step. A failing test blocks deployment.
-
----
-
-## What I deliberately didn't build
-
-This was an exercise in shipping a working system end-to-end, not in
-maximising features. A few things were skipped intentionally and would be
-the first additions in a serious follow-up:
-
-- **Token streaming** — the LLM response arrives all at once instead of
-  appearing word-by-word. ChatGPT-style streaming would feel much faster
-  but adds plumbing across FastAPI, the UI, and the LangChain integration.
-- **Multi-turn conversation context** — each question is treated as
-  independent. Conversation history support requires history truncation,
-  query rewriting, and conversation state management.
-- **Re-ranking** — a cross-encoder re-ranker after the initial top-k vector
-  search usually improves precision 2-5%. The cost is added latency and an
-  extra dependency.
-- **Authentication** — anyone with the URL can use the assistant. A real
-  internal tool would gate on OIDC/SAML at the reverse proxy.
-- **Hosted embeddings** — local CPU embedding is the bottleneck on Render's
-  free tier. Switching to Cohere or Voyage would cut retrieval latency from
-  ~10s to ~50ms in production.
-- **A bigger, adversarial eval set** — 25 hand-curated questions is enough
-  to demonstrate the methodology, not enough to stress-test the system.
 
 ---
 
