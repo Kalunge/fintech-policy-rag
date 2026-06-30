@@ -47,13 +47,22 @@ def test_agent_handles_unknown_id(client: TestClient) -> None:
     skip_if_rate_limited(resp)
     assert resp.status_code == 200
     data = resp.json()
-    answer_lower = data["answer"].lower()
-    # Either the tool returned AGENT_NOT_FOUND, the model said it didn't know,
-    # or we hit a rate limit and the agent reported the issue gracefully
-    # (which is also acceptable behaviour — we don't crash).
+    # Normalise Unicode formatting hyphens (some models render IDs with
+    # U+2011 non-breaking hyphens, e.g. "AG‑999" instead of "AG-999")
+    # before substring matching.
+    answer_lower = data["answer"].lower().replace("‑", "-").replace("–", "-")
+    # The agent should signal that AG-999 isn't a known ID. Different
+    # models phrase this differently — we accept any of the common
+    # framings.
     acceptable = (
         "not found" in answer_lower
         or "no agent" in answer_lower
+        or "no record" in answer_lower
+        or "couldn't find" in answer_lower
+        or "could not find" in answer_lower
+        or "doesn't exist" in answer_lower
+        or "does not exist" in answer_lower
+        or "unknown" in answer_lower
         or "i can only answer" in answer_lower
         or "ag-999" in answer_lower
         or "ran into a problem" in answer_lower
